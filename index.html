@@ -223,15 +223,12 @@ footer{text-align:center;color:var(--muted);padding:30px;font-size:12px}
   </div>
   <footer>Cebimde Hava · Gökyüzünü takip et, gününü planla.</footer>
 </main>
-</body>
-</html>
 
 <script>
 "use strict";
 
 // API anahtarlarını buraya gir.
-const OWM_API_KEY = '528336ccec76b916918cca15ab14ed3a';
-
+const OWM_API_KEY = "528336ccec76b916918cca15ab14ed3a";
 const $ = id => document.getElementById(id);
 const state = {
   city: "İstanbul",
@@ -594,4 +591,5 @@ loadWeather("İstanbul").catch(error => {
   put("mainError", error.message);
 });
 </script>
+</body>
 </html>
