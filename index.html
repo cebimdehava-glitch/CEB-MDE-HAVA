@@ -1,819 +1,597 @@
+
 <!DOCTYPE html>
-<html lang="tr" class="dark">
+<html lang="tr">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Cebimde Hava AI - Başkentler ve Kesin Çözüm Sürümü</title>
-    <!-- Tailwind CSS CDN -->
-    <script src="https://cdn.tailwindcss.com"></script>
-    <script>
-        tailwind.config = {
-            darkMode: 'class',
-            theme: {
-                extend: {
-                    colors: {
-                        brand: { 50: '#e0f2fe', 500: '#0ea5e9', 600: '#0284c7', 900: '#0369a1', 950: '#082f49' }
-                    }
-                }
-            }
-        }
-    </script>
-    <!-- Chart.js CDN -->
-    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-    <!-- FontAwesome Icons -->
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <meta name="theme-color" content="#0f172a">
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="theme-color" content="#080d18">
+<title>Cebimde Hava | Hava Durumu</title>
+<style>
+:root {
+  --bg:#080d18;
+  --panel:rgba(22,34,55,.78);
+  --line:rgba(255,255,255,.12);
+  --text:#f3f6ff;
+  --muted:#a3b0c6;
+  --blue:#65c9ff;
+  --cyan:#77f0e0;
+}
+*{box-sizing:border-box}
+body{
+  margin:0;
+  font-family:system-ui,-apple-system,"Segoe UI",sans-serif;
+  color:var(--text);
+  background:radial-gradient(ellipse at top left,#193b5b,transparent 45%),var(--bg);
+  min-height:100vh;
+}
+button,input,textarea{font:inherit}
+button{cursor:pointer}
+header,main{max-width:1200px;margin:auto;padding:22px}
+header{display:flex;align-items:center;justify-content:space-between}
+.brand{font-size:24px;font-weight:850}
+.brand span{color:var(--blue)}
+.subtitle{color:var(--muted);font-size:12px}
+.card{
+  background:var(--panel);
+  border:1px solid var(--line);
+  border-radius:22px;
+  padding:22px;
+  backdrop-filter:blur(18px);
+  box-shadow:0 15px 40px #0002;
+  min-width:0;
+}
+.grid{display:grid;grid-template-columns:1.5fr 1fr;gap:18px}
+.stack{display:grid;gap:18px;align-content:start}
+.search{display:flex;gap:8px;margin-bottom:16px}
+input,textarea{
+  background:#ffffff09;
+  color:var(--text);
+  border:1px solid var(--line);
+  border-radius:12px;
+  padding:12px;
+  min-width:0;
+}
+.search input{flex:1;width:100%}
+.btn{
+  background:#ffffff0c;
+  border:1px solid var(--line);
+  color:var(--text);
+  border-radius:12px;
+  padding:11px 15px;
+}
+.primary{background:linear-gradient(120deg,#65c9ff,#a99aff);color:#071322;border:0;font-weight:800}
+.chips{display:flex;flex-wrap:wrap;gap:8px;margin-bottom:20px}
+.chip{border:1px solid var(--line);background:#ffffff08;color:var(--text);border-radius:25px;padding:8px 13px}
+h2{font-size:17px;margin:0 0 18px}
+.city{font-size:27px;font-weight:800}
+.temp{font-size:76px;font-weight:850;letter-spacing:-4px;margin:18px 0 5px}
+.muted{color:var(--muted);font-size:12px}
+.hero-icon{font-size:38px;color:var(--blue)}
+.metrics{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px}
+.metric{padding:14px;background:#ffffff06;border:1px solid #ffffff0c;border-radius:14px}
+.metric label{display:block;font-size:12px;color:var(--muted);margin-bottom:8px}
+.metric strong{font-size:20px}
+.hourly{display:flex;gap:10px;overflow-x:auto}
+.hour{min-width:75px;text-align:center;padding:12px 8px;border-radius:13px;background:#ffffff08}
+.hour div{margin:10px 0}
+.forecast-row{display:flex;align-items:center;justify-content:space-between;gap:10px;padding:13px 0;border-bottom:1px solid #ffffff0d;font-size:13px}
+.records{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:18px}
+.record{padding:18px;border:1px solid var(--line);border-radius:17px;background:var(--panel)}
+.record strong{display:block;font-size:25px;margin-top:8px}
+.ring{width:125px;height:125px;border-radius:50%;display:grid;place-items:center;background:conic-gradient(var(--blue) var(--score,0deg),#ffffff15 0)}
+.ring-inner{background:#101a2a;border-radius:50%;width:102px;height:102px;display:grid;place-items:center;text-align:center}
+.ring-inner strong{font-size:27px}
+.radar{width:100%;height:320px;border:0;border-radius:15px}
+.chat-messages{height:230px;overflow:auto;display:flex;flex-direction:column;gap:10px;margin-bottom:12px}
+.message{padding:12px;border-radius:13px;background:#ffffff09;font-size:13px;line-height:1.6;overflow-wrap:anywhere;white-space:pre-wrap}
+.message.user{align-self:flex-end;background:#65c9ff19}
+.form-stack{display:grid;gap:10px}
+.feed{display:grid;gap:10px;margin-top:15px}
+.post{padding:13px;border:1px solid var(--line);border-radius:13px;font-size:13px;overflow-wrap:anywhere}
+.quiz-option{display:block;width:100%;text-align:left;margin:8px 0}
+footer{text-align:center;color:var(--muted);padding:30px;font-size:12px}
+@media(max-width:800px){.grid{grid-template-columns:1fr}header,main{padding:15px}.temp{font-size:65px}}
+@media(max-width:430px){.records{gap:8px}.record{padding:12px}.record strong{font-size:21px}.card{padding:16px}}
+</style>
 </head>
-<body id="bodyBg" class="bg-slate-950 text-slate-100 font-sans antialiased pb-24 min-h-screen selection:bg-sky-500 selection:text-white transition-colors duration-500">
+<body>
+<header>
+  <div>
+    <div class="brand">Cebimde <span>Hava</span></div>
+    <div class="subtitle">Hava cebinde, keyfin yerinde.</div>
+  </div>
+  <span class="muted">Canlı hava durumu</span>
+</header>
 
-    <!-- UYARI ŞERİDİ -->
-    <div id="weatherAlertBanner" class="hidden bg-rose-600 text-white px-4 py-2 text-xs font-bold text-center animate-pulse flex items-center justify-center space-x-2">
-        <i class="fa-solid fa-triangle-exclamation"></i>
-        <span id="alertText">Meteorolojik Uyarı: Şiddetli hava / fırtına bekleniyor!</span>
+<main>
+  <form class="search" id="searchForm">
+    <input id="cityInput" placeholder="Şehir ara kanka..." aria-label="Şehir ara">
+    <button class="btn primary">Ara</button>
+    <button class="btn" type="button" id="gpsBtn">GPS</button>
+  </form>
+
+  <div class="chips">
+    <button class="chip" data-city="Erzurum">Erzurum</button>
+    <button class="chip" data-city="Bayburt">Bayburt</button>
+    <button class="chip" data-city="İstanbul">İstanbul</button>
+    <button class="chip" data-city="Ankara">Ankara</button>
+    <button class="chip" data-city="İzmir">İzmir</button>
+    <button class="chip" data-city="Antalya">Antalya</button>
+    <button class="chip" data-city="Yalova">Yalova</button>
+  </div>
+
+  <div class="records">
+    <div class="record">Türkiye'nin soğuğu<div id="coldCity">Yükleniyor...</div><strong id="coldTemp">--°</strong></div>
+    <div class="record">Türkiye'nin sıcağı<div id="hotCity">Yükleniyor...</div><strong id="hotTemp">--°</strong></div>
+  </div>
+
+  <div class="grid">
+    <div class="stack">
+      <section class="card">
+        <div class="muted">ŞU ANKİ HAVA</div>
+        <div class="city" id="currentCity">İstanbul</div>
+        <div class="muted" id="currentDate">Güncel hava bilgileri</div>
+        <div class="hero-icon" id="weatherIcon">☁</div>
+        <div class="temp" id="temperature">--°</div>
+        <div id="condition">Hava bilgisi yükleniyor...</div>
+        <p class="muted" id="feelsLike">Hissedilen: --°</p>
+        <p class="muted" id="sunTimes">Gün doğumu ve batımı: --</p>
+        <p class="muted" id="airQuality">Hava kalitesi: --</p>
+        <p id="mainError" role="alert"></p>
+      </section>
+
+      <section class="card">
+        <h2>Hava detayları</h2>
+        <div class="metrics">
+          <div class="metric"><label>Rüzgâr</label><strong id="wind">--</strong></div>
+          <div class="metric"><label>Nem</label><strong id="humidity">--</strong></div>
+          <div class="metric"><label>Görüş</label><strong id="visibility">--</strong></div>
+          <div class="metric"><label>Basınç</label><strong id="pressure">--</strong></div>
+          <div class="metric"><label>Bulut</label><strong id="clouds">--</strong></div>
+          <div class="metric"><label>UV</label><strong id="uv">--</strong></div>
+          <div class="metric"><label>Yağış ihtimali</label><strong id="rainChance">--</strong></div>
+          <div class="metric"><label>Çiğ noktası</label><strong id="dewPoint">--</strong></div>
+        </div>
+      </section>
+
+      <section class="card">
+        <h2>Saatlik tahmin · 3 saatlik aralıklar</h2>
+        <div class="hourly" id="hourlyForecast">Yükleniyor...</div>
+      </section>
+
+      <section class="card">
+        <h2>5 günlük tahmin</h2>
+        <div id="dailyForecast">Yükleniyor...</div>
+      </section>
+
+      <section class="card">
+        <h2>Kış Pusulası</h2>
+        <div style="display:flex;align-items:center;gap:22px;flex-wrap:wrap">
+          <div class="ring" id="coldRing">
+            <div class="ring-inner"><div><strong id="coldScore">--</strong><div class="muted">/100</div></div></div>
+          </div>
+          <div style="flex:1;min-width:150px">
+            <strong id="coldLevel">Hesaplanıyor...</strong>
+            <p class="muted" id="coldExplanation">Sıcaklık verisi bekleniyor.</p>
+          </div>
+        </div>
+      </section>
     </div>
 
-    <!-- ÜST BAR -->
-    <header class="sticky top-0 z-50 bg-slate-900/90 backdrop-blur-md border-b border-slate-800 px-4 py-3 flex items-center justify-between shadow-md">
-        <div class="flex items-center space-x-2">
-            <div class="bg-sky-600 text-white p-2 rounded-xl shadow-lg">
-                <i class="fa-solid fa-cloud-sun-rain text-lg"></i>
-            </div>
-            <div>
-                <h1 class="font-black text-sm sm:text-base tracking-wide text-sky-400">Cebimde Hava AI</h1>
-                <p id="subBrandText" class="text-[10px] text-slate-400">@cebimdehava • Başkentler Sürümü</p>
-            </div>
+    <div class="stack">
+      <section class="card">
+        <h2>Ayaz AI · Mahalle meteoroloğun</h2>
+        <div class="chat-messages" id="chatMessages" aria-live="polite">
+          <div class="message">Selam kanka! Ben Ayaz. Hava hakkında ne merak ediyorsun?</div>
         </div>
-        <div class="flex items-center space-x-2">
-            <a href="https://instagram.com/cebimdehava" target="_blank" rel="noopener noreferrer" class="bg-gradient-to-tr from-amber-500 via-rose-600 to-purple-600 text-white px-3 py-1.5 rounded-xl text-xs font-bold transition flex items-center space-x-1.5 shadow-md">
-                <i class="fa-brands fa-instagram text-sm"></i>
-                <span class="hidden sm:inline">Instagram</span>
-            </a>
-            <button onclick="useGeolocation()" class="bg-slate-800 hover:bg-slate-700 text-sky-400 p-2 rounded-xl border border-slate-700 transition" title="Konumumu Kullan">
-                <i class="fa-solid fa-location-crosshairs"></i>
-            </button>
-            <button onclick="toggleTheme()" class="bg-slate-800 hover:bg-slate-700 text-amber-400 p-2 rounded-xl border border-slate-700 transition">
-                <i id="themeIcon" class="fa-solid fa-moon"></i>
-            </button>
-        </div>
-    </header>
+        <form class="search" id="chatForm">
+          <input id="chatInput" placeholder="Şemsiye alayım mı kanka?" maxlength="500">
+          <button class="btn primary" id="sendChat">Sor</button>
+        </form>
+        <button class="btn" type="button" id="speakBtn">Son cevabı sesli oku</button>
+        <button class="btn" type="button" id="stopSpeakBtn">Sesi durdur</button>
+        <p class="muted">OpenAI anahtarını canlı sitede güvenli sunucu tarafında sakla.</p>
+        <p id="aiError" role="alert"></p>
+      </section>
 
-    <!-- ARAMA ÇUBUĞU -->
-    <div class="max-w-4xl mx-auto px-4 mt-4">
-        <div class="relative flex items-center">
-            <input type="text" id="searchInput" placeholder="İl veya ilçe adı yaz (Örn: İstanbul, Ankara, Erzurum, Bayburt)..." 
-                class="w-full bg-slate-900 border border-slate-800 rounded-2xl px-4 py-4 pl-12 pr-28 text-sm focus:outline-none focus:border-sky-500 transition text-slate-100 placeholder-slate-500 shadow-inner">
-            <i class="fa-solid fa-magnifying-glass absolute left-4 text-slate-500 text-base"></i>
-            <div class="absolute right-2 flex items-center space-x-1.5">
-                <button onclick="startVoiceSearch()" id="micBtn" class="bg-rose-600/20 hover:bg-rose-600/30 text-rose-400 border border-rose-500/30 p-2.5 rounded-xl transition">
-                    <i class="fa-solid fa-microphone text-sm"></i>
-                </button>
-                <button onclick="searchCity()" id="searchBtnText" class="bg-sky-600 hover:bg-sky-500 text-white px-4 py-2.5 rounded-xl text-xs font-bold transition">Ara</button>
-            </div>
-        </div>
+      <section class="card">
+        <h2>Canlı Radar</h2>
+        <iframe id="radarFrame" class="radar" title="Windy hava radarı" loading="lazy" allow="geolocation" src="https://embed.windy.com/embed2.html?lat=41.01&lon=28.97&detailLat=41.01&detailLon=28.97&width=650&height=450&zoom=6&level=surface&overlay=radar&product=radar&menu=&message=true"></iframe>
+      </section>
+
+      <section class="card">
+        <h2>Halkın Kürsüsü</h2>
+        <form id="communityForm" class="form-stack">
+          <input id="postAuthor" placeholder="Adın / Mahallen" maxlength="50" required>
+          <textarea id="postMessage" placeholder="Sokakta hava nasıl?" maxlength="300" required></textarea>
+          <button class="btn primary">Raporu paylaş</button>
+        </form>
+        <div class="feed" id="communityFeed"></div>
+        <p class="muted">Paylaşımlar sadece bu tarayıcı oturumunda görünür; diğer kullanıcılara gönderilmez.</p>
+      </section>
+
+      <section class="card">
+        <h2>Meteoroloji Mini Quiz</h2>
+        <div class="muted" id="quizProgress">Soru 1 / 4</div>
+        <p id="quizQuestion">Hazırlanıyor...</p>
+        <div id="quizOptions"></div>
+        <p id="quizFeedback" aria-live="polite"></p>
+        <div class="muted" id="quizScore">Skor: 0 / 4</div>
+        <button class="btn primary" id="quizNext" disabled>Sonraki soru</button>
+      </section>
     </div>
-
-    <!-- HIZLI FAVORİLER BARI -->
-    <div class="max-w-4xl mx-auto px-4 mt-3">
-        <div class="flex items-center space-x-2 overflow-x-auto pb-1 no-scrollbar" id="favoritesBar">
-            <span id="favBarTitle" class="text-[10px] text-slate-400 font-bold uppercase tracking-wider whitespace-nowrap"><i class="fa-solid fa-star text-amber-400 mr-1"></i> Favoriler (Boş):</span>
-        </div>
-    </div>
-
-    <!-- ORANLAR BARI -->
-    <div class="max-w-4xl mx-auto px-4 mt-2">
-        <div class="grid grid-cols-2 sm:grid-cols-4 gap-2 text-xs">
-            <div class="bg-slate-900/80 border border-slate-800 p-2.5 rounded-2xl flex items-center space-x-2">
-                <i class="fa-solid fa-cloud text-sky-400 text-base"></i>
-                <div><span class="text-[10px] text-slate-400 block" id="lblCloud">Bulut Oranı</span><span id="badge-cloud" class="font-bold text-slate-200">%--</span></div>
-            </div>
-            <div class="bg-slate-900/80 border border-slate-800 p-2.5 rounded-2xl flex items-center space-x-2">
-                <i class="fa-solid fa-droplet text-blue-400 text-base"></i>
-                <div><span class="text-[10px] text-slate-400 block" id="lblHum">Nem Oranı</span><span id="badge-hum" class="font-bold text-slate-200">%--</span></div>
-            </div>
-            <div class="bg-slate-900/80 border border-slate-800 p-2.5 rounded-2xl flex items-center space-x-2">
-                <i class="fa-solid fa-gauge text-emerald-400 text-base"></i>
-                <div><span class="text-[10px] text-slate-400 block" id="lblPress">Basınç</span><span id="badge-press" class="font-bold text-slate-200">-- mb</span></div>
-            </div>
-            <div class="bg-slate-900/80 border border-slate-800 p-2.5 rounded-2xl flex items-center space-x-2">
-                <i class="fa-solid fa-wind text-indigo-400 text-base"></i>
-                <div><span class="text-[10px] text-slate-400 block" id="lblWind">Rüzgar / Hamle</span><span id="badge-wind" class="font-bold text-slate-200">-- km/s</span></div>
-            </div>
-        </div>
-    </div>
-
-    <!-- ANA İÇERİK ALANI -->
-    <main class="max-w-4xl mx-auto px-4 mt-4 space-y-6">
-
-        <!-- 1. ANA SAYFA SEKMESİ -->
-        <div id="tab-home" class="space-y-6 tab-content">
-            <div class="bg-gradient-to-r from-amber-500/10 via-sky-500/10 to-indigo-500/10 border border-amber-500/30 rounded-3xl p-5 shadow-xl relative overflow-hidden flex items-center space-x-4">
-                <div class="bg-amber-500/20 text-amber-400 p-3.5 rounded-2xl border border-amber-500/30 text-xl shadow-inner">
-                    <i class="fa-solid fa-bullhorn"></i>
-                </div>
-                <div class="flex-1">
-                    <h3 class="font-black text-amber-400 text-xs tracking-wider uppercase">Cebimde Hava AI (@cebimdehava)</h3>
-                    <p id="dailyAdviceText" class="text-xs text-slate-200 font-medium mt-1">Konum alınıyor...</p>
-                </div>
-            </div>
-
-            <div id="weatherCard" class="bg-gradient-to-br from-slate-900 to-slate-900/90 border border-slate-800 rounded-3xl p-6 shadow-2xl relative overflow-hidden">
-                <div class="flex justify-between items-start relative z-10">
-                    <div>
-                        <div class="flex items-center space-x-2">
-                            <h2 id="locationName" class="text-2xl font-black text-white">Yükleniyor...</h2>
-                            <button onclick="toggleFavoriteCurrent()" id="favBtn" class="text-slate-500 hover:text-amber-400 transition text-lg"><i class="fa-regular fa-star" id="favIcon"></i></button>
-                        </div>
-                        <p id="conditionText" class="text-sky-400 font-semibold mt-1">Veriler Bekleniyor...</p>
-                    </div>
-                    <div class="text-right">
-                        <span id="currentTemp" class="text-5xl font-black tracking-tighter text-white">--°C</span>
-                        <p class="text-xs text-slate-400 mt-1"><span id="lblFeels">Hissedilen</span>: <span id="feelsLike" class="font-bold text-slate-200">--°C</span></p>
-                    </div>
-                </div>
-                <div class="mt-4 pt-4 border-t border-slate-800/80 grid grid-cols-2 sm:grid-cols-3 gap-3 text-xs text-slate-300">
-                    <div><i class="fa-solid fa-cloud-rain text-sky-400 mr-1"></i> <span id="lblCardPrecip">Anlık Yağış</span>: <strong id="cardPrecip" class="text-white">-- mm</strong></div>
-                    <div><i class="fa-solid fa-eye text-amber-400 mr-1"></i> <span id="lblCardVis">Görüş</span>: <strong id="cardVis" class="text-white">-- km</strong></div>
-                    <div><i class="fa-solid fa-compass text-indigo-400 mr-1"></i> <span id="lblCardDir">Yön</span>: <strong id="cardWindDir" class="text-white">--°</strong></div>
-                </div>
-            </div>
-
-            <!-- Saatlik Tahmin -->
-            <div class="bg-slate-900 border border-slate-800 rounded-3xl p-5 shadow-xl">
-                <h3 id="lblHourly" class="font-bold text-sm text-slate-200 mb-3 flex items-center">
-                    <i class="fa-solid fa-clock text-sky-400 mr-2"></i> Saatlik Detaylı Tahmin Akışı
-                </h3>
-                <div id="hourlyContainer" class="flex space-x-3 overflow-x-auto pb-2 no-scrollbar"></div>
-            </div>
-
-            <!-- Haftalık Takvim -->
-            <div class="bg-slate-900 border border-slate-800 rounded-3xl p-5 shadow-xl">
-                <h3 id="lblDaily" class="font-bold text-sm text-slate-200 mb-3 flex items-center">
-                    <i class="fa-solid fa-calendar-days text-sky-400 mr-2"></i> 7 Günlük Uzman Takvimi
-                </h3>
-                <div id="dailyContainer" class="space-y-2"></div>
-            </div>
-        </div>
-
-        <!-- 2. HARİTA SEKMESİ -->
-        <div id="tab-map" class="space-y-6 tab-content hidden">
-            <div class="bg-slate-900 border border-slate-800 rounded-3xl p-5 shadow-xl space-y-4">
-                <h3 id="lblMapTitle" class="font-bold text-sm text-slate-200"><i class="fa-solid fa-map-location-dot text-sky-400 mr-2"></i> Windy Canlı Radar Entegrasyonu</h3>
-                <div class="w-full h-[450px] rounded-2xl overflow-hidden border border-slate-800">
-                    <iframe id="windyFrame" width="100%" height="100%" src="https://embed.windy.com/embed2.html?lat=41.0082&lon=28.9784&zoom=6&level=surface&overlay=wind" frameborder="0"></iframe>
-                </div>
-            </div>
-        </div>
-
-        <!-- 3. KIYASLA SEKMESİ -->
-        <div id="tab-compare" class="space-y-6 tab-content hidden">
-            <div class="bg-slate-900 border border-slate-800 rounded-3xl p-5 shadow-xl space-y-4">
-                <h3 id="lblCompareTitle" class="font-bold text-sm text-sky-400"><i class="fa-solid fa-scale-balanced mr-2"></i> İki İli Yan Yana Kıyasla</h3>
-                <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                    <div class="space-y-2">
-                        <label id="lblCity1" class="text-xs text-slate-400 block font-bold">1. Şehir:</label>
-                        <input type="text" id="compCity1" value="İstanbul" class="w-full bg-slate-950 border border-slate-800 rounded-xl px-3 py-2 text-xs text-white focus:outline-none focus:border-sky-500">
-                    </div>
-                    <div class="space-y-2">
-                        <label id="lblCity2" class="text-xs text-slate-400 block font-bold">2. Şehir:</label>
-                        <input type="text" id="compCity2" value="Ankara" class="w-full bg-slate-950 border border-slate-800 rounded-xl px-3 py-2 text-xs text-white focus:outline-none focus:border-sky-500">
-                    </div>
-                </div>
-                <button onclick="compareCities()" id="btnCompare" class="w-full bg-sky-600 hover:bg-sky-500 text-white py-2.5 rounded-xl text-xs font-bold transition shadow-md">Hava Durumlarını Kıyasla</button>
-                <div id="compareResultContainer" class="grid grid-cols-1 sm:grid-cols-2 gap-4 pt-4 border-t border-slate-800 text-xs">
-                    <div class="bg-slate-950/60 p-4 rounded-2xl border border-slate-800 text-center" id="compBox1">1. Şehir verisi bekleniyor...</div>
-                    <div class="bg-slate-950/60 p-4 rounded-2xl border border-slate-800 text-center" id="compBox2">2. Şehir verisi bekleniyor...</div>
-                </div>
-            </div>
-        </div>
-
-        <!-- 4. QUIZ SEKMESİ -->
-        <div id="tab-quiz" class="space-y-6 tab-content hidden">
-            <div class="bg-slate-900 border border-slate-800 rounded-3xl p-5 shadow-xl space-y-4">
-                <h3 id="lblQuizTitle" class="font-bold text-sm text-amber-400"><i class="fa-solid fa-brain mr-2"></i> Meteoroloji Bilgi Yarışması</h3>
-                <div id="quizCard" class="bg-slate-950/60 p-5 rounded-2xl border border-slate-800 space-y-4 text-xs">
-                    <p id="quizQuestion" class="font-bold text-slate-200 text-sm">Soru yükleniyor...</p>
-                    <div id="quizOptions" class="space-y-2"></div>
-                    <p id="quizFeedback" class="font-bold text-sky-400 mt-2"></p>
-                </div>
-                <button onclick="loadNextQuizQuestion()" id="btnNextQuiz" class="bg-amber-600 hover:bg-amber-500 text-white px-4 py-2 rounded-xl text-xs font-bold transition">Sonraki Soru</button>
-            </div>
-        </div>
-
-        <!-- 5. AI SOHBET SEKMESİ (BAŞKENTLER, KAR OLUŞUMU VE YÖRESEL YEMEK EKLENDİ) -->
-        <div id="tab-ai" class="space-y-6 tab-content hidden">
-            <div class="bg-slate-900 border border-slate-800 rounded-3xl p-5 shadow-xl space-y-4">
-                <div class="flex items-center justify-between border-b border-slate-800 pb-4">
-                    <h3 id="lblAiTitle" class="font-black text-slate-100">Cebimde Hava AI Asistanı</h3>
-                    <div class="flex space-x-2">
-                        <button onclick="startVoiceChat()" id="btnAiTalk" class="bg-rose-600 text-white px-3 py-1.5 rounded-xl text-xs font-bold transition flex items-center space-x-1">
-                            <i class="fa-solid fa-microphone-lines"></i><span>Konuş</span>
-                        </button>
-                        <button onclick="speakLastAIResponse()" id="btnAiListen" class="bg-sky-600/20 text-sky-400 border border-sky-500/30 px-3 py-1.5 rounded-xl text-xs font-bold">
-                            <i class="fa-solid fa-volume-high"></i><span>Dinle</span>
-                        </button>
-                    </div>
-                </div>
-                <div id="chatBox" class="h-60 overflow-y-auto space-y-3 p-3 bg-slate-950/60 rounded-2xl border border-slate-800 text-xs">
-                    <div class="bg-slate-900 p-3 rounded-2xl border border-slate-800 max-w-[85%]">
-                        <span class="text-sky-400 font-bold block mb-1">Cebimde Hava AI (@cebimdehava)</span>
-                        <span id="aiWelcomeText">Merhabalar gardaş! Ülkelerin başkentlerini, karın oluşumunu, yöresel yemekleri veya hava durumunu sor, şak diye cevaplayayım!</span>
-                    </div>
-                </div>
-                <div class="flex space-x-2">
-                    <input type="text" id="chatInput" placeholder="Soru sor (Örn: Fransa'nın başkenti neresi, Kar nasıl oluşur?)..." class="bg-slate-950 border border-slate-800 rounded-xl px-3 py-2.5 text-xs flex-1 text-white focus:outline-none focus:border-sky-500">
-                    <button onclick="sendChatMessage()" id="btnSendChat" class="bg-sky-600 hover:bg-sky-500 text-white px-4 py-2.5 rounded-xl text-xs font-bold">Gönder</button>
-                </div>
-            </div>
-        </div>
-
-        <!-- 6. ANALİZ SEKMESİ -->
-        <div id="tab-analysis" class="space-y-6 tab-content hidden">
-            <div class="bg-slate-900 border border-slate-800 rounded-3xl p-5 shadow-xl">
-                <h3 id="lblChartTitle" class="font-bold text-sm text-slate-200 mb-3">Sıcaklık Trend Grafiği</h3>
-                <div class="h-64"><canvas id="weatherChart"></canvas></div>
-            </div>
-        </div>
-
-        <!-- 7. AYARLAR SEKMESİ -->
-        <div id="tab-settings" class="space-y-6 tab-content hidden">
-            <div class="bg-slate-900 border border-slate-800 rounded-3xl p-5 shadow-xl text-xs space-y-4">
-                <h3 class="font-bold text-sm text-slate-200"><i class="fa-solid fa-globe text-sky-400 mr-2"></i> <span id="lblSettingsTitle">Dil Seçimi / Language Selection</span></h3>
-                <div class="grid grid-cols-2 sm:grid-cols-4 gap-2 pt-2">
-                    <button onclick="changeLanguage('tr')" id="btnLang-tr" class="p-3 rounded-2xl border border-sky-500 bg-sky-500/20 text-sky-400 font-bold text-center transition">🇹🇷 Türkçe</button>
-                    <button onclick="changeLanguage('az')" id="btnLang-az" class="p-3 rounded-2xl border border-slate-800 bg-slate-950 text-slate-300 font-bold text-center transition hover:border-slate-700">🇦🇿 Azəri</button>
-                    <button onclick="changeLanguage('en')" id="btnLang-en" class="p-3 rounded-2xl border border-slate-800 bg-slate-950 text-slate-300 font-bold text-center transition hover:border-slate-700">🇬🇧 English</button>
-                    <button onclick="changeLanguage('es')" id="btnLang-es" class="p-3 rounded-2xl border border-slate-800 bg-slate-950 text-slate-300 font-bold text-center transition hover:border-slate-700">🇪🇸 Español</button>
-                </div>
-            </div>
-        </div>
-
-    </main>
-
-    <!-- ALT NAVİGASYON -->
-    <nav class="fixed bottom-0 left-0 right-0 bg-slate-900/95 backdrop-blur-md border-t border-slate-800 py-2 px-4 flex justify-around items-center z-50 text-xs shadow-2xl">
-        <button onclick="switchTab('home')" id="nav-home" class="flex flex-col items-center text-sky-400 space-y-1"><i class="fa-solid fa-house text-base"></i><span id="navHome">Ana Sayfa</span></button>
-        <button onclick="switchTab('map')" id="nav-map" class="flex flex-col items-center text-slate-400 space-y-1"><i class="fa-solid fa-map text-base"></i><span id="navMap">Harita</span></button>
-        <button onclick="switchTab('compare')" id="nav-compare" class="flex flex-col items-center text-slate-400 space-y-1"><i class="fa-solid fa-scale-balanced text-base"></i><span id="navCompare">Kıyasla</span></button>
-        <button onclick="switchTab('quiz')" id="nav-quiz" class="flex flex-col items-center text-slate-400 space-y-1"><i class="fa-solid fa-brain text-base"></i><span>Quiz</span></button>
-        <button onclick="switchTab('ai')" id="nav-ai" class="flex flex-col items-center text-slate-400 space-y-1"><i class="fa-solid fa-robot text-base"></i><span>Ayaz AI</span></button>
-        <button onclick="switchTab('settings')" id="nav-settings" class="flex flex-col items-center text-slate-400 space-y-1"><i class="fa-solid fa-gear text-base"></i><span id="navSettings">Ayarlar</span></button>
-    </nav>
-
-    <!-- JAVASCRIPT MOTORU (BAŞKENTLER, KAR VE YAĞIŞ EŞLEŞTİRME MOTORU) -->
-    <script>
-        let weatherChartInstance = null;
-        let activeWeatherData = null;
-        let lastAiText = "Merhabalar gardaş!";
-        let favorites = JSON.parse(localStorage.getItem('cebimdehava_favs')) || [];
-        let currentLang = localStorage.getItem('cebimdehava_lang') || 'tr';
-
-        function changeLanguage(lang) {
-            currentLang = lang;
-            localStorage.setItem('cebimdehava_lang', lang);
-
-            ['tr', 'az', 'en', 'es'].forEach(l => {
-                const btn = document.getElementById(`btnLang-${l}`);
-                if (btn) {
-                    btn.className = (l === lang) ? "p-3 rounded-2xl border border-sky-500 bg-sky-500/20 text-sky-400 font-bold text-center transition" : "p-3 rounded-2xl border border-slate-800 bg-slate-950 text-slate-300 font-bold text-center transition hover:border-slate-700";
-                }
-            });
-
-            const dict = {
-                tr: {
-                    sub: "@cebimdehava • Başkentler Sürümü", searchPlaceholder: "İl veya ilçe adı yaz (Örn: İstanbul, Erzurum, Bayburt)...",
-                    searchBtn: "Ara", cloud: "Bulut Oranı", hum: "Nem Oranı", press: "Basınç", wind: "Rüzgar / Hamle",
-                    feels: "Hissedilen", pText: "Anlık Yağış", vis: "Görüş", dir: "Yön", hourly: "Saatlik Detaylı Tahmin Akışı",
-                    daily: "7 Günlük Uzman Takvimi", mapT: "Windy Canlı Radar Entegrasyonu", compT: "İki İli Yan Yana Kıyasla",
-                    c1: "1. Şehir:", c2: "2. Şehir:", compBtn: "Hava Durumlarını Kıyasla", quizT: "Meteoroloji Bilgi Yarışması",
-                    nextQ: "Sonraki Soru", aiT: "Cebimde Hava AI Asistanı", aiTalk: "Konuş", aiListen: "Dinle",
-                    aiWelcome: "Merhabalar gardaş! Ülkelerin başkentlerini, karın oluşumunu, yöresel yemekleri veya hava durumunu sor, şak diye cevaplayayım!",
-                    send: "Gönder", chatPlaceholder: "Soru sor (Örn: Fransa'nın başkenti neresi, Kar nasıl oluşur?)...", chartT: "Sıcaklık Trend Grafiği", settingsT: "Dil Seçimi / Language Selection",
-                    nHome: "Ana Sayfa", nMap: "Harita", nComp: "Kıyasla", nSet: "Ayarlar"
-                },
-                az: {
-                    sub: "@cebimdehava • Paytaxtlar Versiyası", searchPlaceholder: "Şəhər və ya rayon adı yazın...",
-                    searchBtn: "Axtar", cloud: "Buludluluq", hum: "Rütubət", press: "Təzyiq", wind: "Külək / Sürət",
-                    feels: "Hiss olunan", pText: "Yağıntı", vis: "Görüş", dir: "İstiqamət", hourly: "Saatlıq Proqnoz",
-                    daily: "7 Günlük Proqnoz", mapT: "Windy Canlı Radar", compT: "İki Şəhəri Müqayisə Et",
-                    c1: "1. Şəhər:", c2: "2. Şəhər:", compBtn: "Hava Müqayisəsi Et", quizT: "Meteorologiya Viktorinası",
-                    nextQ: "Növbəti Sual", aiT: "Cebimde Hava AI", aiTalk: "Danış", aiListen: "Dinlə",
-                    aiWelcome: "Salam qardaş! Ölkələrin paytaxtlarını, qar necə yaranır - hər şeyi sor!",
-                    send: "Göndər", chatPlaceholder: "Sual ver...", chartT: "Temperatur Qrafiki", settingsT: "Dil Seçimi / Language Selection",
-                    nHome: "Ana Səhifə", nMap: "Xəritə", nComp: "Müqayisə", nSet: "Tənzimləmələr"
-                },
-                en: {
-                    sub: "@cebimdehava • Capitals Version", searchPlaceholder: "Enter city or district...",
-                    searchBtn: "Search", cloud: "Cloud Cover", hum: "Humidity", press: "Pressure", wind: "Wind / Gusts",
-                    feels: "Feels Like", pText: "Precipitation", vis: "Visibility", dir: "Direction", hourly: "Hourly Detailed Forecast",
-                    daily: "7-Day Expert Forecast", mapT: "Windy Live Radar", compT: "Compare Two Cities",
-                    c1: "1st City:", c2: "2nd City:", compBtn: "Compare Weather", quizT: "Meteorology Quiz",
-                    nextQ: "Next Question", aiT: "Cebimde Hava AI Assistant", aiTalk: "Speak", aiListen: "Listen",
-                    aiWelcome: "Hello friend! Ask me country capitals, how snow forms, or anything!",
-                    send: "Send", chatPlaceholder: "Ask a question...", chartT: "Temperature Trend Chart", settingsT: "Language Selection",
-                    nHome: "Home", nMap: "Map", nComp: "Compare", nSet: "Settings"
-                },
-                es: {
-                    sub: "@cebimdehava • Versión de Capitales", searchPlaceholder: "Escribe una ciudad...",
-                    searchBtn: "Buscar", cloud: "Nubosidad", hum: "Humedad", press: "Presión", wind: "Viento / Ráfagas",
-                    feels: "Sensación", pText: "Precipitación", vis: "Visibilidad", dir: "Dirección", hourly: "Pronóstico Detallado",
-                    daily: "Pronóstico de 7 Días", mapT: "Radar Windy", compT: "Comparar Ciudades",
-                    c1: "1ra Ciudad:", c2: "2da Ciudad:", compBtn: "Comparar Clima", quizT: "Cuestionario",
-                    nextQ: "Siguiente Pregunta", aiT: "Asistente AI", aiTalk: "Hablar", aiListen: "Escuchar",
-                    aiWelcome: "¡Hola hermano! Pregúntame capitales del mundo o cómo se forma la nieve.",
-                    send: "Enviar", chatPlaceholder: "Haz una pregunta...", chartT: "Gráfico de Tendencia", settingsT: "Selección de Idioma",
-                    nHome: "Inicio", nMap: "Mapa", nComp: "Comparar", nSet: "Ajustes"
-                }
-            };
-
-            const t = dict[lang];
-            if(document.getElementById('subBrandText')) document.getElementById('subBrandText').innerText = t.sub;
-            if(document.getElementById('searchInput')) document.getElementById('searchInput').placeholder = t.searchPlaceholder;
-            if(document.getElementById('searchBtnText')) document.getElementById('searchBtnText').innerText = t.searchBtn;
-            if(document.getElementById('lblCloud')) document.getElementById('lblCloud').innerText = t.cloud;
-            if(document.getElementById('lblHum')) document.getElementById('lblHum').innerText = t.hum;
-            if(document.getElementById('lblPress')) document.getElementById('lblPress').innerText = t.press;
-            if(document.getElementById('lblWind')) document.getElementById('lblWind').innerText = t.wind;
-            if(document.getElementById('lblFeels')) document.getElementById('lblFeels').innerText = t.feels;
-            if(document.getElementById('lblCardPrecip')) document.getElementById('lblCardPrecip').innerText = t.pText;
-            if(document.getElementById('lblCardVis')) document.getElementById('lblCardVis').innerText = t.vis;
-            if(document.getElementById('lblCardDir')) document.getElementById('lblCardDir').innerText = t.dir;
-            if(document.getElementById('lblHourly')) document.getElementById('lblHourly').innerHTML = `<i class="fa-solid fa-clock text-sky-400 mr-2"></i> ${t.hourly}`;
-            if(document.getElementById('lblDaily')) document.getElementById('lblDaily').innerHTML = `<i class="fa-solid fa-calendar-days text-sky-400 mr-2"></i> ${t.daily}`;
-            if(document.getElementById('lblMapTitle')) document.getElementById('lblMapTitle').innerHTML = `<i class="fa-solid fa-map-location-dot text-sky-400 mr-2"></i> ${t.mapT}`;
-            if(document.getElementById('lblCompareTitle')) document.getElementById('lblCompareTitle').innerHTML = `<i class="fa-solid fa-scale-balanced mr-2"></i> ${t.compT}`;
-            if(document.getElementById('lblCity1')) document.getElementById('lblCity1').innerText = t.c1;
-            if(document.getElementById('lblCity2')) document.getElementById('lblCity2').innerText = t.c2;
-            if(document.getElementById('btnCompare')) document.getElementById('btnCompare').innerText = t.compBtn;
-            if(document.getElementById('lblQuizTitle')) document.getElementById('lblQuizTitle').innerHTML = `<i class="fa-solid fa-brain mr-2"></i> ${t.quizT}`;
-            if(document.getElementById('btnNextQuiz')) document.getElementById('btnNextQuiz').innerText = t.nextQ;
-            if(document.getElementById('lblAiTitle')) document.getElementById('lblAiTitle').innerText = t.aiT;
-            if(document.getElementById('btnAiTalk')) document.getElementById('btnAiTalk').innerHTML = `<i class="fa-solid fa-microphone-lines"></i><span>${t.aiTalk}</span>`;
-            if(document.getElementById('btnAiListen')) document.getElementById('btnAiListen').innerHTML = `<i class="fa-solid fa-volume-high"></i><span>${t.aiListen}</span>`;
-            if(document.getElementById('aiWelcomeText')) document.getElementById('aiWelcomeText').innerText = t.aiWelcome;
-            if(document.getElementById('btnSendChat')) document.getElementById('btnSendChat').innerText = t.send;
-            if(document.getElementById('chatInput')) document.getElementById('chatInput').placeholder = t.chatPlaceholder;
-            if(document.getElementById('lblChartTitle')) document.getElementById('lblChartTitle').innerText = t.chartT;
-            if(document.getElementById('lblSettingsTitle')) document.getElementById('lblSettingsTitle').innerText = t.settingsT;
-            if(document.getElementById('navHome')) document.getElementById('navHome').innerText = t.nHome;
-            if(document.getElementById('navMap')) document.getElementById('navMap').innerText = t.nMap;
-            if(document.getElementById('navComp')) document.getElementById('navComp').innerText = t.nComp;
-            if(document.getElementById('navSettings')) document.getElementById('navSettings').innerText = t.nSet;
-
-            renderFavoritesBar();
-            if (activeWeatherData) updateUI(activeWeatherData.name, activeWeatherData);
-        }
-
-        const quizData = [
-            { q: "Atmosferin yere temas eden en alt katmanı hangisidir?", options: ["Stratosfer", "Troposfer", "Mezosfer", "Termosfer"], correct: 1 },
-            { q: "Rüzgar hızını ölçmek için kullanılan meteorolojik alet hangisidir?", options: ["Barometre", "Higrometre", "Anemometre", "Termometre"], correct: 2 },
-            { q: "Havadaki su buharı miktarını ölçen cihazın adı nedir?", options: ["Higrometre", "Barometre", "Piranometre", "Plüviyometre"], correct: 0 },
-            { q: "Türkiye'nin en çok yağış alan ili hangisidir?", options: ["Rize", "Trabzon", "İstanbul", "Antalya"], correct: 0 }
-        ];
-        let currentQuizIndex = 0;
-
-        function loadNextQuizQuestion() {
-            const quiz = quizData[currentQuizIndex % quizData.length];
-            if(document.getElementById('quizQuestion')) document.getElementById('quizQuestion').innerText = quiz.q;
-            const optContainer = document.getElementById('quizOptions');
-            if (!optContainer) return;
-            optContainer.innerHTML = '';
-            if(document.getElementById('quizFeedback')) document.getElementById('quizFeedback').innerText = '';
-            quiz.options.forEach((opt, idx) => {
-                optContainer.innerHTML += `<button onclick="checkQuizAnswer(${idx}, ${quiz.correct})" class="w-full bg-slate-900 hover:bg-slate-800 border border-slate-800 text-left p-3 rounded-xl text-xs text-slate-200 transition font-medium">${opt}</button>`;
-            });
-            currentQuizIndex++;
-        }
-
-        function checkQuizAnswer(selected, correct) {
-            const fb = document.getElementById('quizFeedback');
-            if(!fb) return;
-            if (selected === correct) {
-                fb.innerText = "Doğru bildin gardaş!";
-                fb.className = "font-bold text-emerald-400 mt-2";
-            } else {
-                fb.innerText = "Yanlış! Bir dahakine inşallah.";
-                fb.className = "font-bold text-rose-400 mt-2";
-            }
-        }
-
-        async function compareCities() {
-            const c1 = document.getElementById('compCity1').value.trim();
-            const c2 = document.getElementById('compCity2').value.trim();
-            const box1 = document.getElementById('compBox1');
-            const box2 = document.getElementById('compBox2');
-            if(box1) box1.innerHTML = "Yükleniyor...";
-            if(box2) box2.innerHTML = "Yükleniyor...";
-
-            let data1 = await fetchRawWeather(c1);
-            let data2 = await fetchRawWeather(c2);
-
-            if (box1) box1.innerHTML = data1 ? `<h4 class="font-bold text-sky-400 text-sm mb-1">${data1.name}</h4><p class="text-xl font-black text-white mt-2">${data1.current.temperature_2m}°C</p><p class="text-slate-400 mt-1">Nem: %${data1.current.relative_humidity_2m}</p><p class="text-sky-300 font-semibold mt-1">Yağış: ${data1.current.precipitation} mm</p>` : "Şehir bulunamadı!";
-            if (box2) box2.innerHTML = data2 ? `<h4 class="font-bold text-sky-400 text-sm mb-1">${data2.name}</h4><p class="text-xl font-black text-white mt-2">${data2.current.temperature_2m}°C</p><p class="text-slate-400 mt-1">Nem: %${data2.current.relative_humidity_2m}</p><p class="text-sky-300 font-semibold mt-1">Yağış: ${data2.current.precipitation} mm</p>` : "Şehir bulunamadı!";
-        }
-
-        async function fetchRawWeather(cityName) {
-            try {
-                let geoRes = await fetch(`https://geocoding-api.open-meteo.com/v1/search?name=${encodeURIComponent(cityName)}&count=1&language=tr&format=json`);
-                let geoData = await geoRes.json();
-                if (!geoData.results || geoData.results.length === 0) return null;
-                let res = geoData.results[0];
-                let wRes = await fetch(`https://api.open-meteo.com/v1/forecast?latitude=${res.latitude}&longitude=${res.longitude}&current=temperature_2m,relative_humidity_2m,precipitation,weather_code&daily=weather_code,temperature_2m_max,temperature_2m_min,precipitation_sum&timezone=auto`);
-                let wData = await wRes.json();
-                return { name: res.name, ...wData };
-            } catch(e) { return null; }
-        }
-
-        function switchTab(tabId) {
-            document.querySelectorAll('.tab-content').forEach(el => el.classList.add('hidden'));
-            const targetTab = document.getElementById(`tab-${tabId}`);
-            if(targetTab) targetTab.classList.remove('hidden');
-            document.querySelectorAll('nav button').forEach(b => b.classList.replace('text-sky-400', 'text-slate-400'));
-            const navBtn = document.getElementById(`nav-${tabId}`);
-            if(navBtn) navBtn.classList.replace('text-slate-400', 'text-sky-400');
-            window.scrollTo({ top: 0, behavior: 'smooth' });
-            if(tabId === 'quiz') loadNextQuizQuestion();
-            if(tabId === 'compare') compareCities();
-        }
-
-        function toggleTheme() { document.documentElement.classList.toggle('dark'); }
-
-        function renderFavoritesBar() {
-            const bar = document.getElementById('favoritesBar');
-            if (!bar) return;
-            let titlePrefix = currentLang === 'az' ? 'Seçilmişlər:' : (currentLang === 'en' ? 'Favorites:' : (currentLang === 'es' ? 'Favoritos:' : 'Favoriler:'));
-            if (favorites.length === 0) {
-                bar.innerHTML = `<span class="text-[10px] text-slate-400 font-bold uppercase tracking-wider whitespace-nowrap"><i class="fa-solid fa-star text-amber-400 mr-1"></i> ${titlePrefix} (Boş):</span>`;
-                return;
-            }
-            bar.innerHTML = `<span class="text-[10px] text-slate-400 font-bold uppercase tracking-wider whitespace-nowrap mr-1"><i class="fa-solid fa-star text-amber-400 mr-1"></i> ${titlePrefix}</span>`;
-            favorites.forEach(fav => {
-                bar.innerHTML += `<button onclick="fetchWeather('${fav}')" class="bg-slate-900 hover:bg-slate-800 border border-slate-800 text-sky-400 text-xs px-3 py-1 rounded-full whitespace-nowrap transition shadow-sm">${fav}</button>`;
-            });
-        }
-
-        function toggleFavoriteCurrent() {
-            if (!activeWeatherData) return;
-            const cName = activeWeatherData.name.split(',')[0].trim();
-            const index = favorites.indexOf(cName);
-            const icon = document.getElementById('favIcon');
-            if (index > -1) {
-                favorites.splice(index, 1);
-                if(icon) icon.className = "fa-regular fa-star";
-            } else {
-                favorites.push(cName);
-                if(icon) icon.className = "fa-solid fa-star text-amber-400";
-            }
-            localStorage.setItem('cebimdehava_favs', JSON.stringify(favorites));
-            renderFavoritesBar();
-        }
-
-        function checkFavoriteStatus(cityName) {
-            const icon = document.getElementById('favIcon');
-            if (!icon) return;
-            const realC = cityName.split(',')[0].trim();
-            icon.className = favorites.includes(realC) ? "fa-solid fa-star text-amber-400" : "fa-regular fa-star";
-        }
-
-        function startVoiceSearch() {
-            if (!('webkitSpeechRecognition' in window) && !('SpeechRecognition' in window)) {
-                alert("Tarayıcınız sesli komutu desteklemiyor.");
-                return;
-            }
-            const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
-            const recognition = new SpeechRecognition();
-            recognition.lang = currentLang === 'az' ? 'az-AZ' : (currentLang === 'en' ? 'en-US' : (currentLang === 'es' ? 'es-ES' : 'tr-TR'));
-            recognition.onresult = function(event) {
-                const speechResult = event.results[0][0].transcript;
-                document.getElementById('searchInput').value = speechResult;
-                fetchWeather(speechResult);
-            };
-            recognition.start();
-        }
-
-        function startVoiceChat() {
-            if (!('webkitSpeechRecognition' in window) && !('SpeechRecognition' in window)) {
-                alert("Tarayıcınız sesli sohbeti desteklemiyor.");
-                return;
-            }
-            const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
-            const recognition = new SpeechRecognition();
-            recognition.lang = currentLang === 'az' ? 'az-AZ' : (currentLang === 'en' ? 'en-US' : (currentLang === 'es' ? 'es-ES' : 'tr-TR'));
-            recognition.onresult = function(event) {
-                document.getElementById('chatInput').value = event.results[0][0].transcript;
-                sendChatMessage();
-            };
-            recognition.start();
-        }
-
-        async function fetchWeather(query) {
-            try {
-                let cleanQuery = typeof query === 'string' ? query.trim() : '';
-                let latitude = 41.0082, longitude = 28.9784, name = "İstanbul", country = "Türkiye";
-
-                if (cleanQuery) {
-                    let geoRes = await fetch(`https://geocoding-api.open-meteo.com/v1/search?name=${encodeURIComponent(cleanQuery)}&count=5&language=tr&format=json`);
-                    let geoData = await geoRes.json();
-                    let bestResult = null;
-                    if (geoData.results && geoData.results.length > 0) {
-                        bestResult = geoData.results.find(r => r.country_code === 'TR' && r.name.toLowerCase() === cleanQuery.toLowerCase()) || geoData.results.find(r => r.country_code === 'TR') || geoData.results[0];
-                    }
-                    if (!bestResult) { alert(`"${cleanQuery}" için konum bulunamadı!`); return null; }
-                    latitude = bestResult.latitude;
-                    longitude = bestResult.longitude;
-                    name = `${bestResult.name}${bestResult.admin1 ? ', ' + bestResult.admin1 : ''}`;
-                    country = bestResult.country || 'Türkiye';
-                }
-
-                const windyFrame = document.getElementById('windyFrame');
-                if(windyFrame) windyFrame.src = `https://embed.windy.com/embed2.html?lat=${latitude}&lon=${longitude}&zoom=9&level=surface&overlay=wind`;
-
-                const weatherRes = await fetch(`https://api.open-meteo.com/v1/forecast?latitude=${latitude}&longitude=${longitude}&current=temperature_2m,relative_humidity_2m,apparent_temperature,precipitation,weather_code,cloud_cover,surface_pressure,wind_speed_10m,wind_direction_10m,wind_gusts_10m&hourly=temperature_2m,relative_humidity_2m,precipitation,precipitation_probability,weather_code,cloud_cover,visibility,wind_speed_10m&daily=weather_code,temperature_2m_max,temperature_2m_min,uv_index_max,precipitation_sum,precipitation_probability_max,sunrise,sunset&timezone=auto`);
-                const wData = await weatherRes.json();
-
-                activeWeatherData = { name, country, ...wData };
-                updateUI(`${name} (${country})`, wData);
-                return activeWeatherData;
-            } catch(err) { console.error(err); return null; }
-        }
-
-        function updateUI(cityName, data) {
-            document.getElementById('locationName').innerText = cityName;
-            const cur = data.current;
-            const daily = data.daily;
-            const hourly = data.hourly;
-            const realName = cityName.split(',')[0].trim();
-
-            checkFavoriteStatus(realName);
-
-            document.getElementById('badge-cloud').innerText = `%${cur.cloud_cover ?? 45}`;
-            document.getElementById('badge-hum').innerText = `%${cur.relative_humidity_2m}`;
-            document.getElementById('badge-press').innerText = `${cur.surface_pressure ?? 1013} mb`;
-            document.getElementById('badge-wind').innerText = `${cur.wind_speed_10m} km/s`;
-
-            document.getElementById('cardPrecip').innerText = `${cur.precipitation} mm`;
-            document.getElementById('cardVis').innerText = `${(hourly.visibility[0]/1000).toFixed(1)} km`;
-            document.getElementById('cardWindDir').innerText = `${cur.wind_direction_10m}°`;
-
-            document.getElementById('currentTemp').innerText = `${cur.temperature_2m}°C`;
-            document.getElementById('feelsLike').innerText = `${cur.apparent_temperature}°C`;
-            document.getElementById('conditionText').innerText = getSmartDesc(cur.weather_code, cur.precipitation);
-
-            const alertBanner = document.getElementById('weatherAlertBanner');
-            if (cur.precipitation > 5 || cur.wind_speed_10m > 40) {
-                alertBanner.classList.remove('hidden');
-                document.getElementById('alertText').innerText = `Meteorolojik Uyarı (${realName}): Şiddetli yağış veya fırtına bekleniyor!`;
-            } else { alertBanner.classList.add('hidden'); }
-
-            document.getElementById('dailyAdviceText').innerText = getRegionalAdvice(realName, cur.temperature_2m, cur.precipitation, cur.cloud_cover);
-
-            const hCont = document.getElementById('hourlyContainer');
-            hCont.innerHTML = '';
-            hourly.time.slice(0, 12).forEach((t, i) => {
-                let hRain = hourly.precipitation ? hourly.precipitation[i] : 0;
-                hCont.innerHTML += `<div class="bg-slate-950/50 border border-slate-800 p-3 rounded-2xl text-center min-w-[85px]">
-                    <span class="text-[10px] text-slate-400 block">${t.split('T')[1]}</span>
-                    <span class="font-bold text-slate-200 text-xs block mt-1">${hourly.temperature_2m[i]}°C</span>
-                    <span class="text-[10px] text-sky-400 font-semibold block mt-1"><i class="fa-solid fa-droplet"></i> ${hRain} mm</span>
-                </div>`;
-            });
-
-            const dCont = document.getElementById('dailyContainer');
-            dCont.innerHTML = '';
-            daily.time.forEach((d, i) => {
-                let codeDesc = getSmartDesc(daily.weather_code[i], daily.precipitation_sum ? daily.precipitation_sum[i] : 0);
-                let dailySumRain = daily.precipitation_sum ? daily.precipitation_sum[i] : 0;
-                dCont.innerHTML += `<div class="flex justify-between items-center bg-slate-950/40 p-3 rounded-2xl border border-slate-800 text-xs">
-                    <div class="flex items-center space-x-2">
-                        <i class="fa-solid fa-cloud-rain text-sky-400 text-sm"></i>
-                        <span class="font-medium text-slate-300">${d} - <strong class="text-sky-300">${codeDesc}</strong> <span class="text-sky-400 font-bold ml-1">(${dailySumRain} mm)</span></span>
-                    </div>
-                    <span class="font-bold text-sky-400">${daily.temperature_2m_min[i]}° / ${daily.temperature_2m_max[i]}°</span>
-                </div>`;
-            });
-
-            renderChart(data);
-        }
-
-        function getSmartDesc(code, precip) {
-            code = Number(code);
-            if (precip > 0 && (code === 2 || code === 3)) {
-                return "Bulutlu ve Yağışlı";
-            }
-            if (currentLang === 'az') {
-                const mapAz = { 0: "Günəşli", 1: "Əsasən Günəşli", 2: "Buludlu", 3: "Tutqun", 45: "Dumanlı", 51: "Çiskin", 61: "Yağışlı", 71: "Qarlı", 95: "Fırtınalı" };
-                return mapAz[code] || (precip > 0 ? "Yağışlı" : "Buludlu");
-            } else if (currentLang === 'en') {
-                const mapEn = { 0: "Sunny & Clear", 1: "Mostly Sunny", 2: "Partly Cloudy", 3: "Overcast", 45: "Foggy", 51: "Drizzle", 61: "Rainy", 71: "Snowy", 95: "Thunderstorm" };
-                return mapEn[code] || (precip > 0 ? "Rainy" : "Cloudy");
-            } else if (currentLang === 'es') {
-                const mapEs = { 0: "Soleado", 1: "Mayormente Soleado", 2: "Parcialmente Nublado", 3: "Nublado", 45: "Neblina", 51: "Llovizna", 61: "Lluvioso", 71: "Nevado", 95: "Tormenta" };
-                return mapEs[code] || (precip > 0 ? "Lluvioso" : "Nublado");
-            }
-            const map = { 0: "Güneşli ve Açık", 1: "Çoğunlukla Güneşli", 2: "Parçalı Bulutlu", 3: "Kapalı Bulutlu", 45: "Sisli", 51: "Çisentili", 61: "Yağmurlu", 71: "Karlı", 95: "Fırtınalı" };
-            return map[code] || (precip > 0 ? "Yağmurlu" : "Parçalı Bulutlu");
-        }
-
-        function getRegionalAdvice(cityName, temp, precip, cloud) {
-            if (precip > 0) return `${cityName} bölgesinde şu an ${precip} mm yağış var gardaş, şemsiyeni unutma!`;
-            return `${cityName} şu an ${temp}°C, yağış yok, bulut oranı %${cloud}. Keyfini çıkar gardaş!`;
-        }
-
-        function renderChart(data) {
-            const chartCanvas = document.getElementById('weatherChart');
-            if (!chartCanvas) return;
-            const ctx = chartCanvas.getContext('2d');
-            if(weatherChartInstance) weatherChartInstance.destroy();
-            weatherChartInstance = new Chart(ctx, {
-                type: 'line',
-                data: {
-                    labels: data.hourly.time.slice(0, 12).map(t => t.split('T')[1]),
-                    datasets: [{ label: 'Sıcaklık', data: data.hourly.temperature_2m.slice(0, 12), borderColor: '#0ea5e9', backgroundColor: 'rgba(14,165,233,0.1)', fill: true, tension: 0.4 }]
-                },
-                options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { display: false } } }
-            });
-        }
-
-        function searchCity() {
-            const val = document.getElementById('searchInput').value;
-            if(val) fetchWeather(val);
-        }
-
-        document.getElementById('searchInput').addEventListener('keypress', function (e) {
-            if (e.key === 'Enter') searchCity();
-        });
-
-        function useGeolocation() {
-            if (!navigator.geolocation) { alert("Tarayıcınız konum desteklemiyor."); fetchWeather('İstanbul'); return; }
-            navigator.geolocation.getCurrentPosition(
-                p => fetchWeather({ lat: p.coords.latitude, lon: p.coords.longitude }),
-                () => { alert("Konum alınamadı, İstanbul yükleniyor."); fetchWeather('İstanbul'); },
-                { timeout: 10000, enableHighAccuracy: true }
-            );
-        }
-
-        // BAŞKENTLER, KAR OLUŞUMU VE YÖRESEL YEMEK EKLENMİŞ YAPAY ZEKA MOTORU
-        async function sendChatMessage() {
-            const input = document.getElementById('chatInput');
-            const chatBox = document.getElementById('chatBox');
-            if (!input || !chatBox) return;
-            const userText = input.value.trim();
-            if(!userText) return;
-
-            chatBox.innerHTML += `<div class="bg-sky-950/40 p-3 rounded-2xl text-right"><span class="text-sky-300 font-bold block">Sen</span>${userText}</div>`;
-            input.value = '';
-
-            let aiReply = await generateCapitalsBroadcastAnswer(userText);
-            lastAiText = aiReply;
-            chatBox.innerHTML += `<div class="bg-slate-900 p-3 rounded-2xl border border-slate-800"><span class="text-sky-400 font-bold block mb-1">Cebimde Hava AI (@cebimdehava)</span>${aiReply}</div>`;
-            chatBox.scrollTop = chatBox.scrollHeight;
-            speakLastAIResponse();
-        }
-
-        async function generateCapitalsBroadcastAnswer(query) {
-            const q = query.toLowerCase().trim();
-
-            if (['merhaba', 'selam', 'selamün aleyküm', 'mrb', 'hey', 'salam', 'hello', 'hola'].includes(q)) {
-                return currentLang === 'az' ? "Salam qardaş! Paytaxtlar, hava və yeməklər hazırdır, nə soruşursan?" : (currentLang === 'en' ? "Hello friend! Capitals, weather, and food data ready, ask away!" : (currentLang === 'es' ? "¡Hola hermano! Capitales, clima y comida listos." : "Merhabalar gardaş! Başkentler sözlüğü, kar oluşumu, yöresel yemekler ve hava durumu mermi gibi hazır, ne sorarsan şak diye söyleyeyim!"));
-            }
-
-            // Başkentler Sözlüğü Modülü
-            const capitalMap = {
-                "türkiye": "Ankara", "fransa": "Paris", "almanya": "Berlin", "italya": "Roma",
-                "ingiltere": "Londra", "ispanya": "Madrid", "azerbaycan": "Bakü", "rusya": "Moskova",
-                "amerika": "Washington", "abd": "Washington", "japonya": "Tokyo", "çin": "Pekin",
-                "yunanistan": "Atina", "iran": "Tahran", "ırak": "Bağdat", "suriye": "Şam",
-                "mısır": "Kahire", "suudi arabistan": "Riyad", "hollanda": "Amsterdam", "Yunanistan": "Atina"
-            };
-
-            for (let countryKey in capitalMap) {
-                if (q.includes(countryKey) && (q.includes('başkent') || q.includes('baskent') || q.includes('neresi') || q.includes('başkenti'))) {
-                    let cap = capitalMap[countryKey];
-                    return `Gardaş **${countryKey.charAt(0).toUpperCase() + countryKey.slice(1)}** ülkesinin başkenti **${cap}** şehridir!`;
-                }
-            }
-
-            // Kar Nasıl Oluşur Soru Eşleştirmesi
-            if (q.includes('kar') && (q.includes('nasıl') || q.includes('oluşur') || q.includes('yağar') || q.includes('nedir') || q.includes('oluşumu'))) {
-                return `Kar Oluşum Mekanizması: Bulut içindeki sıcaklık 0°C'nin altına düştüğünde havadaki su buharı doğrudan minik buz kristallerine dönüşür (kırağılaşma). Taneler birleşip kar tanelerini oluşturur ve yer sıcaklığı da uygunsa erimeden lapa lapa yere iner gardaş!`;
-            }
-
-            // Yağmur Nasıl Oluşur
-            if (q.includes('yağmur') && (q.includes('nasıl') || q.includes('oluşur') || q.includes('yağar'))) {
-                return `Yağmurun Oluşumu: Yeryüzündeki sular buharlaşıp yükselir, soğuk havayla yoğuşup bulutları meydana getirir. Damlacıklar ağırlaşınca yer çekimine boyun eğip yağmur olarak yağar gardaş!`;
-            }
-
-            // Sen Kimsin Sorusu
-            if (q.includes('sen kimsin') || q.includes('kimsən') || q.includes('who are you') || q.includes('quién eres')) {
-                return `Gardaş ben **Cebimde Hava AI** (@cebimdehava), senin kişisel yapay zeka meteoroloji, coğrafya ve yaşam rehberinim!`;
-            }
-
-            // Nasılsın Sorusu
-            if (q.includes('nasılsın') || q.includes('nasilsin') || q.includes('ne haber') || q.includes('necəsən') || q.includes('how are you') || q.includes('cómo estás')) {
-                return `Hamdolsun gardaş, mermi gibiyim! Sen nasılsın, işler güçler nasıl gidiyor?`;
-            }
-
-            // Yöresel Yemek Öneri Motoru
-            if (q.includes('ne yiyeyim') || q.includes('yemek') || q.includes('ne yesem') || q.includes('açım') || q.includes('karnım aç')) {
-                let targetFoodCity = "erzurum";
-                const majorCities = [
-                    "istanbul", "ankara", "izmir", "erzurum", "bursa", "antalya", "trabzon", "van", 
-                    "sivas", "konya", "bayburt", "gaziantep", "adana", "hatay", "rize", "kars", "samsun", "malatya", "kayseri"
-                ];
-                for (let c of majorCities) {
-                    if (q.includes(c) || (activeWeatherData && activeWeatherData.name.toLowerCase().includes(c))) {
-                        targetFoodCity = c;
-                        break;
-                    }
-                }
-
-                const foodMap = {
-                    "erzurum": "Erzurum'dasın gardaş! Kesinlikle meşhur **Cağ Kebabı** yemelisiniz, üstüne de nefis **Kadayıf Dolması** çekmelisin.",
-                    "bayburt": "Bayburt'tasın gardaş! Hemen mis gibi **Galıya (Lahana Dolması)** veya **Bayburt Lor Dolması** sipariş et!",
-                    "istanbul": "İstanbul'dasın gardaş! Boğaz manzarasına karşı şöyle çıtır bir **Balık Ekmek** gömmelisin!",
-                    "trabzon": "Trabzon'dasın gardaş! Tereyağlı **Trabzon Pidesi** ya da mis gibi **Kuymak (Mıhlama)** yemeden dönmek olmaz!",
-                    "ankara": "Ankara'dasın gardaş! Kendine güzel bir **Ankara Tava** ısmarla ya da bol köpüklü ayranla **Beypazarı Kurusu** ye!",
-                    "gaziantep": "Gaziantep'tesin gardaş! Sabah **Ali Nazik**, öğlen **Beyran Çorbası**, akşam gerçek **Antep Baklavası**!",
-                    "adana": "Adana'dasın gardaş! Zırh kıymasından acılı gerçek bir **Adana Kebap** yanına buz gibi yayık ayranı fena gider!"
-                };
-
-                return foodMap[targetFoodCity] || `Gardaş ${targetFoodCity.toUpperCase()} için en kral yöresel lezzetleri senin için seçtim! Şehrin adını tam yaz, sana ne yemen gerektiğini şak diye söyleyeyim!`;
-            }
-
-            // Yağış Durumu Sorgulama
-            if (q.includes('yağış') || q.includes('yağmur') || q.includes('kar mi') || q.includes('su')) {
-                if (activeWeatherData) {
-                    let curP = activeWeatherData.current.precipitation;
-                    let cityName = activeWeatherData.name;
-                    if (curP > 0) {
-                        return `Dikkat gardaş! **${cityName}** bölgesinde şu an aktif yağış var (**${curP} mm**). Şemsiyeni unutma!`;
-                    }
-                    return `Şu an **${cityName}** bölgesinde aktif bir yağış görünmüyor (**0 mm**). Hava temiz gardaş!`;
-                }
-                return `Önce arama çubuğundan bir şehir seç gardaş, yağış verilerini anında söyleyeyim!`;
-            }
-
-            // Atasözü ve Deyimler
-            if (q.includes('atasözü') || q.includes('deyim') || q.includes('atasozu') || q.includes('sözler')) {
-                const proverbs = [
-                    "• **Mart kapıdan baktırır, kazma kürek yaktırır:** Mart ayının soğuk ve aldatıcı olduğunu, kış bitti sanılırken en şiddetli soğukların geri gelebileceğini belirtir.",
-                    "• **Ağustosun yarısı yaz, yarısı kıştır:** Yaz mevsiminin bile akşamları serinleyebileceğine dikkat çeken harika bir halk deyişidir."
-                ];
-                let randomP = proverbs[Math.floor(Math.random() * proverbs.length)];
-                return `Hava ve Yaşam Atasözü Hazinesi:<br>${randomP}<br><br>Başka bir atasözü sormak istersen buradayım!`;
-            }
-
-            // İlerleyen Zaman / Haftalık Tahmin
-            if (q.includes('hafta') || q.includes('yarın') || q.includes('gelecek') || q.includes('ilerleyen') || q.includes('önümüzdeki') || q.includes('günlük')) {
-                if (activeWeatherData && activeWeatherData.daily) {
-                    let d = activeWeatherData.daily;
-                    let report = `İşte ${activeWeatherData.name} için ilerleyen günlerin 7 günlük uzman tahmin takvimi:<br>`;
-                    for (let i = 0; i < Math.min(d.time.length, 5); i++) {
-                        let dayDesc = getSmartDesc(d.weather_code[i], d.precipitation_sum[i]);
-                        report += `• **${d.time[i]}**: ${dayDesc}, En Düşük: ${d.temperature_2m_min[i]}°C, En Yüksek: ${d.temperature_2m_max[i]}°C (Yağış: ${d.precipitation_sum[i]} mm)<br>`;
-                    }
-                    return report;
-                }
-                return `Önce ekranın yukarısından bir şehir seç gardaş, ki sana ilerleyen günlerin detaylı tahminini dökeyim!`;
-            }
-
-            // Şehir Hava Durumu (Genel)
-            if (q.includes('hava') || q.includes('sıcaklık') || q.includes('derece')) {
-                let targetCity = "Erzurum";
-                const cities = ["istanbul", "ankara", "izmir", "erzurum", "bursa", "antalya", "trabzon", "van", "sivas", "konya", "bayburt", "gaziantep", "adana"];
-                for (let c of cities) {
-                    if (q.includes(c)) { targetCity = c.charAt(0).toUpperCase() + c.slice(1); break; }
-                }
-                let wData = await fetchRawWeather(targetCity);
-                if (wData) {
-                    return `${wData.name} için anlık hava durumu: Sıcaklık **${wData.current.temperature_2m}°C**, nem **%${wData.current.relative_humidity_2m}**, anlık yağış **${wData.current.precipitation} mm**.`;
-                }
-            }
-
-            // Fıkra Modülü
-            if (q.includes('fıkra') || q.includes('anlat') || q.includes('güldür')) {
-                return `Temel ile Dursun otoyolda giderken arabanın lastiği patlamış. Dursun hemen bijonları söküp tarlaya düşürmüş. Temel seslenmiş: 'Ula Dursun, diğer üç lastikten birer tane bijon sök, dördüne de tak!' Dursun demiş ki: 'Ula Temel, sen akıllı adamsun ama niye kuyuya düşmeyisun?'`;
-            }
-
-            return `Sorduğun "${query}" hakkında bilmen gereken en net gerçek budur gardaş. Ülke başkentlerinden hava durumuna kadar ne merak ediyorsan sor, şak diye cevaplayayım!`;
-        }
-
-        function speakLastAIResponse() {
-            if ('speechSynthesis' in window) {
-                window.speechSynthesis.cancel();
-                const tempDiv = document.createElement('div');
-                tempDiv.innerHTML = lastAiText;
-                const plainText = tempDiv.textContent || tempDiv.innerText || "";
-                const utterance = new SpeechSynthesisUtterance(plainText);
-                utterance.lang = currentLang === 'az' ? 'az-AZ' : (currentLang === 'en' ? 'en-US' : (currentLang === 'es' ? 'es-ES' : 'tr-TR'));
-                window.speechSynthesis.speak(utterance);
-            }
-        }
-
-        window.onload = () => {
-            changeLanguage(currentLang);
-            fetchWeather('İstanbul');
-            compareCities();
-        };
-    </script>
+  </div>
+  <footer>Cebimde Hava · Gökyüzünü takip et, gününü planla.</footer>
+</main>
 </body>
+</html>
+
+<script>
+"use strict";
+
+// API anahtarlarını buraya gir.
+const OWM_API_KEY = "OPENWEATHERMAP_API_KEY_BURAYA";
+
+const $ = id => document.getElementById(id);
+const state = {
+  city: "İstanbul",
+  lat: 41.0082,
+  lon: 28.9784,
+  current: null,
+  forecast: null,
+  air: null
+};
+
+async function api(url) {
+  const response = await fetch(url);
+  if (!response.ok) {
+    const err = await response.json().catch(() => ({}));
+    throw new Error(err.message || "API isteği başarısız: " + response.status);
+  }
+  return response.json();
+}
+
+function weatherIcon(code) {
+  if (code === 800) return "☀";
+  if (code >= 801 && code <= 804) return "☁";
+  if (code >= 700 && code < 800) return "🌫";
+  if (code >= 600 && code < 700) return "❄";
+  if (code >= 500 && code < 600) return "🌧";
+  if (code >= 300 && code < 400) return "🌦";
+  if (code >= 200 && code < 300) return "⛈";
+  return "🌤";
+}
+
+function trDate(timestamp) {
+  return new Date(timestamp * 1000).toLocaleDateString("tr-TR", {
+    weekday: "long",
+    day: "numeric",
+    month: "long"
+  });
+}
+
+function trTime(timestamp) {
+  return new Date(timestamp * 1000).toLocaleTimeString("tr-TR", {
+    hour: "2-digit",
+    minute: "2-digit"
+  });
+}
+
+function put(id, value) {
+  const element = $(id);
+  if (element) element.textContent = value;
+}
+
+async function loadWeather(city) {
+  if (!OWM_API_KEY || OWM_API_KEY.includes("_BURAYA")) {
+    put("mainError", "Önce OWM_API_KEY değişkenine OpenWeatherMap API anahtarını gir.");
+    return;
+  }
+
+  put("mainError", "");
+  put("condition", "Hava durumu yükleniyor...");
+  put("hourlyForecast", "Tahminler alınıyor...");
+  put("dailyForecast", "Tahminler alınıyor...");
+
+  try {
+    const query = new URLSearchParams({
+      q: city,
+      appid: OWM_API_KEY,
+      units: "metric",
+      lang: "tr"
+    });
+
+    const current = await api(
+      "https://api.openweathermap.org/data/2.5/weather?" + query
+    );
+
+    state.city = current.name;
+    state.lat = current.coord.lat;
+    state.lon = current.coord.lon;
+    state.current = current;
+
+    const forecast = await api(
+      "https://api.openweathermap.org/data/2.5/forecast?" + query
+    );
+    state.forecast = forecast;
+
+    renderCurrent(current);
+    renderHourly(forecast);
+    renderDaily(forecast);
+    renderColdScore(current, forecast);
+    updateRadar();
+    updateAIContext();
+
+    document.querySelectorAll("[data-city]").forEach(button => {
+      button.classList.toggle(
+        "active",
+        button.dataset.city.toLocaleLowerCase("tr") ===
+        state.city.toLocaleLowerCase("tr")
+      );
+    });
+
+    loadAirQuality().catch(() => {
+      put("airQuality", "Hava kalitesi verisi alınamadı");
+    });
+
+    loadUV().catch(() => {
+      put("uv", "Desteklenmiyor");
+    });
+
+    put("mainError", "");
+  } catch (error) {
+    console.error("Hava durumu hatası:", error);
+    put("mainError", "Hava bilgileri alınamadı: " + error.message);
+    put("condition", "Veri alınamadı.");
+  }
+}
+
+function renderCurrent(data) {
+  put("currentCity", data.name + ", " + (data.sys.country || ""));
+  put("currentDate", trDate(data.dt));
+  put("temperature", Math.round(data.main.temp) + "°");
+  put("condition", data.weather[0].description);
+  put("weatherIcon", weatherIcon(data.weather[0].id));
+  put("feelsLike", "Hissedilen: " + Math.round(data.main.feels_like) + "°");
+  put("wind", Math.round(data.wind.speed * 3.6) + " km/sa");
+  put("humidity", data.main.humidity + "%");
+  put("visibility", data.visibility != null
+    ? (data.visibility / 1000).toFixed(1) + " km" : "--");
+  put("pressure", data.main.pressure + " hPa");
+  put("clouds", data.clouds.all + "%");
+
+  put("sunTimes",
+    "Gün doğumu: " + trTime(data.sys.sunrise) +
+    " · Gün batımı: " + trTime(data.sys.sunset)
+  );
+
+  put("dewPoint", "--");
+
+  const degrees = data.wind.deg;
+  let direction = "--";
+  if (Number.isFinite(degrees)) {
+    const directions = [
+      "K", "KD", "D", "GD", "G", "GB", "B", "KB"
+    ];
+    direction = directions[Math.round(degrees / 45) % 8];
+  }
+
+  // Rüzgâr yönü metrik kutusunda ayrıca gösterilmezse de hata oluşturmaz.
+  const windElement = $("wind");
+  if (windElement) windElement.title = "Rüzgâr yönü: " + direction;
+
+  const next = state.forecast?.list?.[0];
+  put("rainChance", next && next.pop != null
+    ? Math.round(next.pop * 100) + "%" : "--");
+}
+
+function renderHourly(data) {
+  const container = $("hourlyForecast");
+  container.replaceChildren();
+
+  data.list.slice(0, 16).forEach(item => {
+    const div = document.createElement("div");
+    div.className = "hour";
+
+    const time = document.createElement("div");
+    time.className = "muted";
+    time.textContent = trTime(item.dt);
+
+    const icon = document.createElement("div");
+    icon.textContent = weatherIcon(item.weather[0].id);
+    icon.style.fontSize = "23px";
+
+    const temp = document.createElement("strong");
+    temp.textContent = Math.round(item.main.temp) + "°";
+
+    const rain = document.createElement("div");
+    rain.className = "muted";
+    rain.textContent = "Yağış %" + Math.round((item.pop || 0) * 100);
+
+    div.append(time, icon, temp, rain);
+    container.appendChild(div);
+  });
+}
+
+function renderDaily(data) {
+  const days = new Map();
+
+  data.list.forEach(item => {
+    const date = item.dt_txt.slice(0, 10);
+    if (!days.has(date)) {
+      days.set(date, {
+        date,
+        min: item.main.temp_min,
+        max: item.main.temp_max,
+        pop: item.pop || 0,
+        weather: item.weather[0]
+      });
+    } else {
+      const day = days.get(date);
+      day.min = Math.min(day.min, item.main.temp_min);
+      day.max = Math.max(day.max, item.main.temp_max);
+      day.pop = Math.max(day.pop, item.pop || 0);
+    }
+  });
+
+  const container = $("dailyForecast");
+  container.replaceChildren();
+
+  [...days.values()].slice(0, 5).forEach(day => {
+    const row = document.createElement("div");
+    row.className = "forecast-row";
+
+    const name = document.createElement("span");
+    name.textContent = new Date(day.date + "T12:00:00")
+      .toLocaleDateString("tr-TR", { weekday: "long" });
+
+    const icon = document.createElement("span");
+    icon.textContent = weatherIcon(day.weather.id);
+
+    const temps = document.createElement("strong");
+    temps.textContent =
+      Math.round(day.max) + "° / " + Math.round(day.min) + "°";
+
+    const rain = document.createElement("span");
+    rain.className = "muted";
+    rain.textContent = "%" + Math.round(day.pop * 100);
+
+    row.append(name, icon, temps, rain);
+    container.appendChild(row);
+  });
+}
+
+function renderColdScore(current, forecast) {
+  const temps = forecast.list.map(x => x.main.temp_min);
+  const dailyMin = Math.min(current.main.temp_min, ...temps);
+  const temp = current.main.temp;
+
+  // Eğlence amaçlı gösterge; resmî meteorolojik ölçüm değildir.
+  const score = Math.max(0, Math.min(100,
+    Math.round((Math.max(0, 15 - temp) * 4) +
+               (Math.max(0, 10 - dailyMin) * 2))
+  ));
+
+  put("coldScore", score);
+  put("coldLevel",
+    score >= 75 ? "Dondurucu ayaz!" :
+    score >= 45 ? "Kalın giyin kanka!" :
+    score >= 20 ? "Biraz serin." : "Şimdilik rahat."
+  );
+
+  put("coldExplanation",
+    "Anlık sıcaklık " + Math.round(temp) +
+    "°C, tahminlerdeki en düşük değer yaklaşık " +
+    Math.round(dailyMin) + "°C. Skor bu iki değerden hesaplandı."
+  );
+
+  $("coldRing").style.setProperty("--score", score * 3.6 + "deg");
+}
+
+async function loadAirQuality() {
+  const url = "https://api.openweathermap.org/data/2.5/air_pollution" +
+    "?lat=" + state.lat + "&lon=" + state.lon +
+    "&appid=" + encodeURIComponent(OWM_API_KEY);
+
+  const result = await api(url);
+  state.air = result.list[0];
+
+  const labels = [
+    "Bilinmiyor", "İyi", "Orta", "Hassas gruplar için kötü",
+    "Kötü", "Çok kötü"
+  ];
+
+  put("airQuality", "Hava kalitesi: " +
+    (labels[state.air.main.aqi] || "Bilinmiyor"));
+}
+
+async function loadUV() {
+  // UV verisi ücretsiz Current Weather ve Forecast yanıtlarında
+  // her zaman bulunmaz. Bulunmuyorsa değer uydurulmaz.
+  put("uv", "Veri mevcut değil");
+}
+
+function updateRadar() {
+  const url = new URL("https://embed.windy.com/embed2.html");
+  url.search = new URLSearchParams({
+    lat: state.lat,
+    lon: state.lon,
+    detailLat: state.lat,
+    detailLon: state.lon,
+    width: 650,
+    height: 450,
+    zoom: 6,
+    level: "surface",
+    overlay: "radar",
+    product: "radar",
+    menu: "",
+    message: "true"
+  }).toString();
+
+  $("radarFrame").src = url.toString();
+}
+
+function updateAIContext() {
+  // Ayaz AI parçası bu fonksiyondaki verileri kullanacak.
+  window.cebindekiHavaContext = state.current ? {
+    city: state.city,
+    temperature: state.current.main.temp,
+    feelsLike: state.current.main.feels_like,
+    humidity: state.current.main.humidity,
+    windKmh: state.current.wind.speed * 3.6,
+    pressure: state.current.main.pressure,
+    description: state.current.weather[0].description,
+    forecast: state.forecast?.list?.slice(0, 8).map(item => ({
+      time: item.dt_txt,
+      temperature: item.main.temp,
+      rainProbability: item.pop
+    })) || []
+  } : null;
+}
+
+// Şehir arama
+$("searchForm").addEventListener("submit", async event => {
+  event.preventDefault();
+  const city = $("cityInput").value.trim();
+  if (city) await loadWeather(city);
+});
+
+document.querySelectorAll("[data-city]").forEach(button => {
+  button.addEventListener("click", () => loadWeather(button.dataset.city));
+});
+
+// GPS konumu
+$("gpsBtn").addEventListener("click", () => {
+  if (!navigator.geolocation) {
+    put("mainError", "Tarayıcın konum özelliğini desteklemiyor.");
+    return;
+  }
+
+  navigator.geolocation.getCurrentPosition(async position => {
+    try {
+      state.lat = position.coords.latitude;
+      state.lon = position.coords.longitude;
+
+      const url = "https://api.openweathermap.org/data/2.5/weather" +
+        "?lat=" + state.lat + "&lon=" + state.lon +
+        "&appid=" + encodeURIComponent(OWM_API_KEY) +
+        "&units=metric&lang=tr";
+
+      const result = await api(url);
+      await loadWeather(result.name);
+    } catch (error) {
+      console.error(error);
+      put("mainError", "Konum bilgisi alınamadı: " + error.message);
+    }
+  }, error => {
+    put("mainError", "Konum izni alınamadı: " + error.message);
+  }, { enableHighAccuracy: false, timeout: 10000 });
+});
+
+// Açılış
+loadWeather("İstanbul").catch(error => {
+  console.error("Başlangıç hatası:", error);
+  put("mainError", error.message);
+});
+</script>
 </html>
