@@ -590,6 +590,83 @@ loadWeather("İstanbul").catch(error => {
   console.error("Başlangıç hatası:", error);
   put("mainError", error.message);
 });
+/* Ayaz AI sohbet sistemi */
+let ayazLastReply = "";
+
+const ayazForm = document.getElementById("chatForm");
+const ayazInput = document.getElementById("chatInput");
+const ayazMessages = document.getElementById("chatMessages");
+const ayazError = document.getElementById("aiError");
+
+function ayazAddMessage(text, type) {
+  const message = document.createElement("div");
+  message.className = "message" + (type ? " " + type : "");
+  message.textContent = text;
+  ayazMessages.appendChild(message);
+  ayazMessages.scrollTop = ayazMessages.scrollHeight;
+}
+
+ayazForm.addEventListener("submit", async function (event) {
+  event.preventDefault();
+
+  const message = ayazInput.value.trim();
+  if (!message) return;
+
+  ayazAddMessage(message, "user");
+  ayazInput.value = "";
+  ayazError.textContent = "";
+
+  const sendButton = document.getElementById("sendChat");
+  sendButton.disabled = true;
+  sendButton.textContent = "Yanıtlıyor...";
+
+  try {
+    const response = await fetch("/api/chat", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json"
+      },
+      body: JSON.stringify({
+        message,
+        context: window.cebindekiHavaContext || {}
+      })
+    });
+
+    const data = await response.json();
+
+    if (!response.ok) {
+      throw new Error(data.error || "Ayaz'a ulaşılamadı.");
+    }
+
+    ayazLastReply = data.reply || "";
+    ayazAddMessage(ayazLastReply, "");
+  } catch (error) {
+    ayazError.textContent = error.message;
+  } finally {
+    sendButton.disabled = false;
+    sendButton.textContent = "Sor";
+  }
+});
+
+/* Yanıtı sesli okuma */
+document.getElementById("speakBtn").addEventListener("click", function () {
+  if (!ayazLastReply || !("speechSynthesis" in window)) {
+    ayazError.textContent = "Henüz okunacak cevap yok veya sesli okuma desteklenmiyor.";
+    return;
+  }
+
+  window.speechSynthesis.cancel();
+
+  const utterance = new SpeechSynthesisUtterance(ayazLastReply);
+  utterance.lang = "tr-TR";
+  window.speechSynthesis.speak(utterance);
+});
+
+/* Sesi durdurma */
+document.getElementById("stopSpeakBtn").addEventListener("click", function () {
+  window.speechSynthesis.cancel();
+});
+
 </script>
 </body>
 </html>
