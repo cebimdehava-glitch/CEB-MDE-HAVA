@@ -1,66 +1,75 @@
-
-export default async function handler(req, res) {
+```javascript
+module.exports = async (req, res) => {
+  // Sadece POST isteklerine izin ver
   if (req.method !== "POST") {
     res.setHeader("Allow", "POST");
     return res.status(405).json({
-      error: "Bu endpoint POST isteği bekliyor."
+      error: "Sadece POST isteği kabul edilir."
     });
   }
 
-  const apiKey = process.env.OPENAI_API_KEY;
+  const apiKey = process.env.GEMINI_API_KEY;
 
   if (!apiKey) {
     return res.status(500).json({
-      error: "OPENAI_API_KEY Vercel ortam değişkenlerinde tanımlı değil."
+      error: "GEMINI_API_KEY Vercel ortam değişkenlerinde tanımlı değil."
     });
   }
 
   try {
-    const body = req.body || {};
-    const message = typeof body.message === "string"
-      ? body.message.trim()
-      : "";
+    const { message, context } = req.body || {};
 
-    if (!message || message.length > 500) {
+    if (
+      typeof message !== "string" ||
+      !message.trim()
+    ) {
       return res.status(400).json({
-        error: "Mesaj boş olamaz ve en fazla 500 karakter olabilir."
+        error: "Lütfen Ayaz'a bir soru yaz."
       });
     }
 
-    const context = body.context &&
-      typeof body.context === "object"
-      ? body.context
-      : {};
+    const weatherContext = context
+      ? JSON.stringify(context).slice(0, 6000)
+      : "Henüz hava durumu verisi yok.";
+
+    const prompt = `
+Sen Ayaz'sın. Cebimde Hava internet sitesinin
+Türkçe konuşan hava durumu asistanısın.
+
+Kurallar:
+- Daima Türkçe cevap ver.
+- Samimi, anlaşılır ve kısa cevaplar yaz.
+- Verilen hava durumu verilerini kullan.
+- Veride olmayan sıcaklık, yağış veya tahmin bilgilerini uydurma.
+- Güncel bilgi yoksa bunu açıkça belirt.
+- Kullanıcıya hava koşullarına uygun pratik öneriler ver.
+
+Sitenin hava durumu verileri:
+${weatherContext}
+
+Kullanıcının sorusu:
+${message.trim()}
+`;
 
     const response = await fetch(
-      "https://api.openai.com/v1/chat/completions",
+      "https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent",
       {
         method: "POST",
         headers: {
-          "Authorization": `Bearer ${apiKey}`,
-          "Content-Type": "application/json"
+          "Content-Type": "application/json",
+          "x-goog-api-key": apiKey
         },
         body: JSON.stringify({
-          model: "gpt-4o-mini",
-          messages: [
-            {
-              role: "system",
-              content:
-                "Sen Ayaz'sın, Talha'nın mahalle meteoroloğusun. " +
-                "Türkçe konuş, kısa ve samimi cevap ver. " +
-                "Uygun olduğunda kanka kelimesini kullan. " +
-                "Hava durumu sorularında aşağıdaki verileri kullan. " +
-                "Verilmeyen hava bilgilerini uydurma.\n\n" +
-                "Seçili şehrin hava durumu bağlamı:\n" +
-                JSON.stringify(context)
-            },
+          contents: [
             {
               role: "user",
-              content: message
+              parts: [{ text: prompt }]
             }
           ],
-          temperature: 0.7,
-          max_tokens: 300
+          generationConfig: {
+            temperature: 0.7,
+            maxOutputTokens: 700
+          }
         })
       }
     );
@@ -68,28 +77,34 @@ export default async function handler(req, res) {
     const data = await response.json();
 
     if (!response.ok) {
-      console.error("OpenAI hata kodu:", response.status);
+      console.error("Gemini API hatası:", response.status, data);
+
       return res.status(502).json({
-        error: "OpenAI bağlantısı başarısız. API erişimini ve faturalandırmayı kontrol et."
+        error:
+          data.error?.message ||
+          "Gemini bağlantısı başarısız. API anahtarını ve kullanım limitini kontrol et."
       });
     }
 
-    const reply = data.choices?.[0]?.message?.content;
+    const reply = data.candidates?.[0]?.content?.parts
+      ?.map(part => part.text || "")
+      .join("")
+      .trim();
 
     if (!reply) {
       return res.status(502).json({
-        error: "Ayaz şu anda cevap üretemedi."
+        error: "Gemini boş cevap verdi. Lütfen tekrar dene."
       });
     }
 
-    return res.status(200).json({
-      reply: reply.trim()
-    });
+    return res.status(200).json({ reply });
+
   } catch (error) {
-    console.error("Ayaz API hatası:", error);
+    console.error("Ayaz sunucu hatası:", error);
 
     return res.status(500).json({
-      error: "Sunucu hatası oluştu. Biraz sonra tekrar dene."
+      error: "Ayaz şu anda cevap veremiyor. Lütfen tekrar dene."
     });
   }
-}
+};
+```
