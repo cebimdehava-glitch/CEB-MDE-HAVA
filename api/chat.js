@@ -31,8 +31,7 @@ module.exports = async (req, res) => {
     const weatherContext = context
       ? JSON.stringify(context).slice(0, 6000)
       : "Henüz hava durumu verisi yok.";
-
-    const prompt = `
+      const prompt = `
 Sen Ayaz'sın. Cebimde Hava internet sitesinin
 Türkçe konuşan hava durumu asistanısın.
 
