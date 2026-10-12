@@ -238,6 +238,81 @@ async function api(url) {
   return response.json();
 }
 
+async function loadTurkeyExtremes() {
+  const cities = [
+    "Adana", "Adıyaman", "Afyonkarahisar", "Ağrı",
+    "Amasya", "Ankara", "Antalya", "Artvin",
+    "Aydın", "Balıkesir", "Bilecik", "Bingöl",
+    "Bitlis", "Bolu", "Burdur", "Bursa",
+    "Çanakkale", "Çankırı", "Çorum", "Denizli",
+    "Diyarbakır", "Edirne", "Elazığ", "Erzincan",
+    "Erzurum", "Eskişehir", "Gaziantep", "Giresun",
+    "Gümüşhane", "Hakkari", "Hatay", "Isparta",
+    "Mersin", "İstanbul", "İzmir", "Kars",
+    "Kastamonu", "Kayseri", "Kırklareli", "Kırşehir",
+    "Kocaeli", "Konya", "Kütahya", "Malatya",
+    "Manisa", "Kahramanmaraş", "Mardin", "Muğla",
+    "Muş", "Nevşehir", "Niğde", "Ordu",
+    "Rize", "Sakarya", "Samsun", "Siirt",
+    "Sinop", "Sivas", "Tekirdağ", "Tokat",
+    "Trabzon", "Tunceli", "Şanlıurfa", "Uşak",
+    "Van", "Yozgat", "Zonguldak", "Aksaray",
+    "Bayburt", "Karaman", "Kırıkkale", "Batman",
+    "Şırnak", "Bartın", "Ardahan", "Iğdır",
+    "Yalova", "Karabük", "Kilis", "Osmaniye",
+    "Düzce"
+  ];
+
+  put("coldCity", "Ölçümler alınıyor...");
+  put("hotCity", "Ölçümler alınıyor...");
+
+  const results = await Promise.allSettled(
+    cities.map(city => {
+      const params = new URLSearchParams({
+        q: city + ",TR",
+        appid: OWM_API_KEY,
+        units: "metric",
+        lang: "tr"
+      });
+
+      return api(
+        "https://api.openweathermap.org/data/2.5/weather?" +
+        params
+      );
+    })
+  );
+
+  const valid = results
+    .filter(result => result.status === "fulfilled")
+    .map(result => result.value)
+    .filter(data =>
+      data.main &&
+      Number.isFinite(data.main.temp) &&
+      data.sys?.country === "TR"
+    );
+
+  if (valid.length === 0) {
+    put("coldCity", "Veri alınamadı");
+    put("hotCity", "Veri alınamadı");
+    put("coldTemp", "--°");
+    put("hotTemp", "--°");
+    return;
+  }
+
+  const cold = valid.reduce((a, b) =>
+    a.main.temp < b.main.temp ? a : b
+  );
+
+  const hot = valid.reduce((a, b) =>
+    a.main.temp > b.main.temp ? a : b
+  );
+
+  put("coldCity", cold.name);
+  put("coldTemp", Math.round(cold.main.temp) + "°C");
+  put("hotCity", hot.name);
+  put("hotTemp", Math.round(hot.main.temp) + "°C");
+}
+
 function weatherIcon(code) {
   if (code === 800) return "☀";
   if (code >= 801 && code <= 804) return "☁";
@@ -576,7 +651,8 @@ $("gpsBtn").addEventListener("click", () => {
 });
 
 // Açılış
-loadWeather("İstanbul").catch(error => {
+  loadTurkeyExtremes();
+  loadWeather("İstanbul").catch(error => {
   console.error("Başlangıç hatası:", error);
   put("mainError", error.message);
 });
