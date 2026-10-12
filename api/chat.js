@@ -1,4 +1,4 @@
-```javascript
+
 module.exports = async (req, res) => {
   // Sadece POST isteklerine izin ver
   if (req.method !== "POST") {
@@ -73,8 +73,20 @@ ${message.trim()}
       }
     );
 
-    const data = await response.json();
+const raw = await response.text();
 
+let data;
+
+try {
+  data = JSON.parse(raw);
+
+} catch (error) {
+  console.error("Gemini geçersiz yanıt:", raw.slice(0, 500));
+
+  return res.status(502).json({
+    error: "Yapay zekâ sunucusundan geçersiz yanıt geldi."
+  });
+}
     if (!response.ok) {
       console.error("Gemini API hatası:", response.status, data);
 
@@ -106,4 +118,3 @@ ${message.trim()}
     });
   }
 };
-```
