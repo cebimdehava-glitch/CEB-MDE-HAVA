@@ -50,28 +50,44 @@ Kullanıcının sorusu:
 ${message.trim()}
 `;
 
-    const response = await fetch(
-      "https://generativelanguage.googleapis.com/v1beta/models/gemini-3.8-flash:generateContent",
-      {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-          "x-goog-api-key": apiKey
-        },
-        body: JSON.stringify({
-          contents: [
-            {
-              role: "user",
-              parts: [{ text: prompt }]
-            }
-          ],
-          generationConfig: {
-            temperature: 0.7,
-            maxOutputTokens: 700
+    
+let response;
+
+for (let attempt = 0; attempt < 3; attempt++) {
+  response = await fetch(
+    "https://generativelanguage.googleapis.com/v1beta/models/gemini-3.8-flash:generateContent",
+    {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        "x-goog-api-key": apiKey
+      },
+      body: JSON.stringify({
+        contents: [
+          {
+            role: "user",
+            parts: [{ text: prompt }]
           }
-        })
-      }
+        ],
+        generationConfig: {
+          temperature: 0.7,
+          maxOutputTokens: 700
+        }
+      })
+    }
+  );
+
+  if (response.status !== 503 && response.status !== 429) {
+    break;
+  }
+
+  if (attempt < 2) {
+    await new Promise(resolve =>
+      setTimeout(resolve, 2000 * (attempt + 1))
     );
+  }
+}
+
 
 const raw = await response.text();
 
