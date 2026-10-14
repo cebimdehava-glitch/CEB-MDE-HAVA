@@ -734,5 +734,142 @@ document.getElementById("stopSpeakBtn").addEventListener("click", function () {
 });
 
 </script>
+  
+<!-- Cebimde Hava - Trafik Yoğunluğu -->
+<section id="cebimde-trafik">
+  <div class="trafik-baslik">
+    <h2>Canlı Trafik Yoğunluğu</h2>
+    <p>İstanbul ve çevresindeki yol trafiğini haritada incele.</p>
+  </div>
+
+  <div class="trafik-anahtar">
+    <span>🟢 Akıcı</span>
+    <span>🟡 Yoğunlaşıyor</span>
+    <span>🔴 Yoğun</span>
+  </div>
+
+  <div id="cebimde-trafik-haritasi"></div>
+  <p class="trafik-not">
+    Trafik verileri TomTom tarafından sağlanır.
+  </p>
+</section>
+
+<link
+  rel="stylesheet"
+  href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"
+/>
+
+<style>
+  #cebimde-trafik {
+    max-width: 1100px;
+    margin: 35px auto;
+    padding: 20px;
+    font-family: Arial, sans-serif;
+    color: inherit;
+  }
+
+  #cebimde-trafik .trafik-baslik h2 {
+    margin-bottom: 8px;
+  }
+
+  #cebimde-trafik .trafik-baslik p,
+  #cebimde-trafik .trafik-not {
+    opacity: 0.8;
+  }
+
+  #cebimde-trafik .trafik-anahtar {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 15px;
+    margin: 18px 0;
+    font-size: 14px;
+  }
+
+  #cebimde-trafik-haritasi {
+    width: 100%;
+    height: 430px;
+    border-radius: 14px;
+    overflow: hidden;
+    background: #e5e7eb;
+    z-index: 0;
+  }
+
+  #cebimde-trafik .trafik-not {
+    font-size: 12px;
+    margin-top: 10px;
+  }
+
+  @media (max-width: 600px) {
+    #cebimde-trafik {
+      padding: 12px;
+    }
+
+    #cebimde-trafik-haritasi {
+      height: 340px;
+    }
+  }
+</style>
+
+<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+
+<script>
+(function () {
+  const mapElement = document.getElementById(
+    "cebimde-trafik-haritasi"
+  );
+
+  if (!mapElement || mapElement.dataset.initialized) return;
+  mapElement.dataset.initialized = "true";
+
+  // Kendi TomTom API anahtarını buraya gir.
+  const TOMTOM_API_KEY = "TOMTOM_API_ANAHTARINI_BURAYA_YAZ";
+
+  if (typeof L === "undefined") {
+    mapElement.textContent = "Harita kütüphanesi yüklenemedi.";
+    return;
+  }
+
+  if (TOMTOM_API_KEY === "hwO8lLQSzwFEgnTlM8DztSGXXDPj3UnJ") {
+    mapElement.textContent =
+      "Trafik haritasını etkinleştirmek için TomTom API anahtarını ekleyin.";
+    return;
+  }
+
+  const map = L.map(mapElement).setView(
+    [41.0082, 28.9784],
+    11
+  );
+
+  L.tileLayer(
+    "https://tile.openstreetmap.org/{z}/{x}/{y}.png",
+    {
+      maxZoom: 19,
+      attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a>'
+    }
+  ).addTo(map);
+
+  const trafikKatmani = L.tileLayer(
+    "https://api.tomtom.com/traffic/map/4/tile/flow/relative0/{z}/{x}/{y}.png?key=" +
+      encodeURIComponent(TOMTOM_API_KEY),
+    {
+      tileSize: 256,
+      maxZoom: 22,
+      opacity: 0.85,
+      attribution: '&copy; TomTom Traffic'
+    }
+  ).addTo(map);
+
+  // Haritayı belirli aralıklarla yenile.
+  window.setInterval(function () {
+    trafikKatmani.redraw();
+  }, 60000);
+
+  // Harita boyutunu gerektiğinde yeniden hesapla.
+  window.setTimeout(function () {
+    map.invalidateSize();
+  }, 300);
+})();
+</script>
+
 </body>
 </html>
