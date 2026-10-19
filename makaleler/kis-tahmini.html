@@ -1,0 +1,370 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<title>2026-2027 Kış Tahmini | Cebimde Hava</title>
+
+<style>
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: Arial, sans-serif;
+    color: #eaf7ff;
+    line-height: 1.8;
+    background: linear-gradient(180deg, #061629, #123b5a, #b8e5f5);
+    min-height: 100vh;
+    overflow-x: hidden;
+}
+
+/* Kar taneleri */
+.snow {
+    position: fixed;
+    top: -10px;
+    color: white;
+    z-index: 0;
+    pointer-events: none;
+    animation: snowfall linear infinite;
+}
+
+@keyframes snowfall {
+    to {
+        transform: translateY(110vh);
+    }
+}
+
+header {
+    text-align: center;
+    padding: 65px 20px 45px;
+    background: linear-gradient(
+        180deg,
+        rgba(3, 17, 34, 0.85),
+        rgba(8, 40, 65, 0.5)
+    );
+    position: relative;
+    z-index: 1;
+}
+
+.logo {
+    color: #8de0ff;
+    font-weight: bold;
+    font-size: 19px;
+    margin-bottom: 20px;
+}
+
+.label {
+    display: inline-block;
+    padding: 6px 15px;
+    border: 1px solid #80d9ff;
+    border-radius: 30px;
+    color: #a8e8ff;
+    font-size: 12px;
+    letter-spacing: 2px;
+    margin-bottom: 20px;
+}
+
+h1 {
+    font-size: clamp(32px, 6vw, 58px);
+    line-height: 1.2;
+    margin-bottom: 20px;
+    text-shadow: 0 4px 20px #0008;
+}
+
+.subtitle {
+    max-width: 700px;
+    margin: auto;
+    color: #d2efff;
+    font-size: 17px;
+}
+
+.date {
+    margin-top: 25px;
+    font-size: 13px;
+    color: #b8d9e9;
+}
+
+main {
+    max-width: 850px;
+    margin: 35px auto 60px;
+    padding: 0 18px;
+    position: relative;
+    z-index: 1;
+}
+
+.article {
+    background: rgba(255, 255, 255, 0.96);
+    color: #20384a;
+    padding: clamp(22px, 5vw, 48px);
+    border-radius: 22px;
+    box-shadow: 0 15px 50px #001a2b55;
+}
+
+h2 {
+    color: #07547b;
+    font-size: 25px;
+    line-height: 1.4;
+    margin: 35px 0 12px;
+}
+
+p {
+    margin-bottom: 17px;
+}
+
+.notice {
+    background: #e5f6ff;
+    border-left: 5px solid #32a8df;
+    padding: 17px;
+    border-radius: 7px;
+    margin-bottom: 25px;
+    font-size: 14px;
+}
+
+.summary {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 12px;
+    margin: 25px 0;
+}
+
+.box {
+    background: #eff9ff;
+    border: 1px solid #d2eaf7;
+    border-radius: 13px;
+    padding: 18px;
+}
+
+.box strong {
+    display: block;
+    color: #0878a8;
+    margin-bottom: 8px;
+}
+
+.box span {
+    font-size: 13px;
+    line-height: 1.6;
+    display: block;
+}
+
+ul {
+    padding-left: 23px;
+    margin-bottom: 20px;
+}
+
+li {
+    margin-bottom: 10px;
+}
+
+footer {
+    text-align: center;
+    padding: 25px 15px;
+    color: #123b53;
+    font-size: 13px;
+    position: relative;
+    z-index: 1;
+}
+
+@media (max-width: 600px) {
+    .summary {
+        grid-template-columns: 1fr;
+    }
+
+    header {
+        padding-top: 45px;
+    }
+
+    h2 {
+        font-size: 22px;
+    }
+}
+</style>
+</head>
+
+<body>
+
+<header>
+    <div class="logo">❄ Cebimde Hava</div>
+
+    <div class="label">KIŞ SEZONU ÖZEL DOSYASI</div>
+
+    <h1>2026–2027<br>Kış Tahmini</h1>
+
+    <p class="subtitle">
+        Türkiye'yi nasıl bir kış bekliyor?
+        Sıcaklıklar, yağışlar ve kar ihtimali hakkında
+        sezonun öne çıkan beklentileri.
+    </p>
+
+    <div class="date">
+        19 Ekim 2026 · 4 dakika okuma
+    </div>
+</header>
+
+<main>
+<article class="article">
+
+    <div class="notice">
+        <strong>⚠️ Önemli bilgi:</strong>
+        Bu yazı sezonluk eğilimleri değerlendiren bir ön tahmindir.
+        Kış boyunca yaşanacak hava olayları kesin olarak önceden
+        belirlenemez. Tahminler yeni verilerle değişebilir.
+    </div>
+
+    <p>
+        Sonbaharın ilerlemesiyle birlikte gözler 2026–2027 kışına
+        çevrildi. Özellikle Türkiye'de kışın sert geçip geçmeyeceği,
+        İstanbul'a kar yağıp yağmayacağı ve yağışların nasıl
+        şekilleneceği merak ediliyor.
+    </p>
+
+    <p>
+        Sezonluk tahminler bize genel sıcaklık ve yağış eğilimleri
+        hakkında fikir verebilir. Ancak belirli bir gün kar yağacağını
+        veya kuvvetli bir soğuk hava dalgasının yaşanacağını aylar
+        öncesinden kesin olarak söylemek mümkün değildir.
+    </p>
+
+    <div class="summary">
+        <div class="box">
+            <strong>🌡️ Sıcaklık</strong>
+            <span>Türkiye'de mevsim normallerinin üzerinde sıcaklık ihtimali takip edilmeli.</span>
+        </div>
+
+        <div class="box">
+            <strong>🌧️ Yağış</strong>
+            <span>Yağış beklentileri bölgelere göre farklılık gösterebilir.</span>
+        </div>
+
+        <div class="box">
+            <strong>❄️ Kar</strong>
+            <span>Şehir bazında karın tarihi ve miktarı şimdiden kesinleştirilemez.</span>
+        </div>
+    </div>
+
+    <h2>🌡️ Türkiye'de sıcaklıklar nasıl olacak?</h2>
+
+    <p>
+        Sezonluk model tahminlerinde Türkiye için normalin üzerinde
+        sıcaklık ihtimali değerlendirilebilecek senaryolardan biri.
+        Bununla birlikte, ortalama sıcaklıkların yüksek olması kış
+        boyunca soğuk hava dalgalarının görülmeyeceği anlamına gelmiyor.
+    </p>
+
+    <p>
+        Kış aylarında kısa süreli ancak etkili soğuk hava sistemleri
+        ülkemize ulaşabilir. Bu sistemler bazı bölgelerde sıcaklıkları
+        hızla düşürebilir ve uygun koşullar oluştuğunda kar yağışına
+        neden olabilir.
+    </p>
+
+    <h2>🌧️ Yağışlar nasıl şekillenecek?</h2>
+
+    <p>
+        Türkiye'de yağış miktarı bölgeden bölgeye önemli farklılıklar
+        gösterebilir. Karadeniz kıyıları, Marmara, Ege, İç Anadolu ve
+        Doğu Anadolu aynı hava sistemlerinden aynı ölçüde etkilenmez.
+    </p>
+
+    <p>
+        Bu nedenle yalnızca ülke geneline ait bir sezonluk tahmine
+        bakarak her şehir için yağışlı veya kurak bir kış beklemek
+        doğru olmaz. Güncel model verilerinin takip edilmesi gerekiyor.
+    </p>
+
+    <h2>❄️ İstanbul'a bu kış kar yağacak mı?</h2>
+
+    <p>
+        İstanbul'da kar yağışı için soğuk hava ile yağışın doğru zamanda
+        buluşması gerekiyor. Rüzgârın yönü, atmosferin farklı
+        seviyelerindeki sıcaklıklar ve sistemin hareketi kar ihtimalini
+        doğrudan etkileyebilir.
+    </p>
+
+    <p>
+        Bu yüzden İstanbul'da karın hangi gün yağacağını veya yerde
+        tutup tutmayacağını şimdiden kesin olarak söylemek mümkün değil.
+        Daha güvenilir değerlendirmeler, olası sistem yaklaşırken
+        güncel kısa ve orta vadeli tahminlerle yapılabilir.
+    </p>
+
+    <h2>🌍 El Niño ve La Niña etkili olacak mı?</h2>
+
+    <p>
+        Pasifik Okyanusu'ndaki El Niño ve La Niña koşulları, atmosfer
+        dolaşımını ve dünya genelindeki bazı hava düzenlerini etkileyebilir.
+        Ancak bu olaylar Türkiye'de her yıl aynı kış koşullarını oluşturmaz.
+    </p>
+
+    <p>
+        Kuzey Atlantik'teki basınç düzenleri, jet akımı ve Avrupa
+        üzerindeki atmosferik sistemler de Türkiye'nin kış havasında
+        önemli rol oynar. Dolayısıyla yalnızca El Niño veya La Niña
+        bilgisiyle kışın kesinlikle karlı ya da ılık geçeceği söylenemez.
+    </p>
+
+    <h2>📅 Kış tahmini ne zaman netleşecek?</h2>
+
+    <p>
+        Kış yaklaştıkça kısa ve orta vadeli tahminler, yaklaşan hava
+        sistemlerini daha ayrıntılı göstermeye başlar. Özellikle kar,
+        buzlanma ve kuvvetli yağış gibi olaylarda güncel tahminler
+        sezonluk tahminlerden daha kullanışlıdır.
+    </p>
+
+    <ul>
+        <li><strong>Sezonluk tahminler:</strong> Genel sıcaklık ve yağış eğilimlerini gösterir.</li>
+        <li><strong>Orta vadeli tahminler:</strong> Yaklaşan hava sistemleri hakkında fikir verir.</li>
+        <li><strong>Kısa vadeli tahminler:</strong> Günlük hava olaylarını değerlendirmek için daha uygundur.</li>
+    </ul>
+
+    <h2>🔎 Genel değerlendirme</h2>
+
+    <p>
+        2026–2027 kışı için şimdilik en doğru yaklaşım, sezonluk
+        tahminleri kesin sonuçlar olarak değerlendirmemek. Türkiye'de
+        sıcaklıkların mevsim normallerinin üzerinde seyretmesi olası
+        senaryolardan biri olsa da bu durum soğuk hava dalgalarını
+        ve kar yağışlarını dışlamıyor.
+    </p>
+
+    <p>
+        Önümüzdeki dönemde yeni model güncellemeleriyle birlikte
+        sıcaklık ve yağış beklentileri daha ayrıntılı incelenebilecek.
+        Kışın gerçek gidişatını anlamak için güncel tahminleri ve
+        resmî meteorolojik uyarıları takip etmek önem taşıyor.
+    </p>
+
+    <div class="notice">
+        <strong>Cebimde Hava'nın notu:</strong>
+        Bu içerik bilgilendirme amaçlıdır. Günlük planlarınızda
+        güncel hava tahminlerini ve resmî meteoroloji uyarılarını
+        esas alın.
+    </div>
+
+</article>
+</main>
+
+<footer>
+    © 2026 Cebimde Hava · Hava durumunu takipte kal ❄
+</footer>
+
+<script>
+for (let i = 0; i < 35; i++) {
+    const flake = document.createElement("div");
+    flake.className = "snow";
+    flake.textContent = "❄";
+    flake.style.left = Math.random() * 100 + "vw";
+    flake.style.opacity = Math.random() * 0.7 + 0.3;
+    flake.style.fontSize = (Math.random() * 12 + 8) + "px";
+    flake.style.animationDuration = (Math.random() * 10 + 8) + "s";
+    flake.style.animationDelay = (Math.random() * -15) + "s";
+    document.body.appendChild(flake);
+}
+</script>
+
+</body>
+</html>
