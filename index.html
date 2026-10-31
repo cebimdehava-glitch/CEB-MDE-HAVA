@@ -1,224 +1,347 @@
-
 <!DOCTYPE html>
 <html lang="tr">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<meta name="theme-color" content="#080d18">
+<meta name="theme-color" content="#06152d">
+<meta name="description" content="Cebimde Hava ile güncel hava durumu, tahminler, radar ve hava kalitesi.">
 <title>Cebimde Hava | Hava Durumu</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
 <style>
-:root {
-  --bg:#080d18;
-  --panel:rgba(22,34,55,.78);
-  --line:rgba(255,255,255,.12);
-  --text:#f3f6ff;
-  --muted:#a3b0c6;
-  --blue:#65c9ff;
-  --cyan:#77f0e0;
+:root{
+  color-scheme:dark;
+  --bg:#041126;--bg2:#071b38;--panel:rgba(8,34,68,.78);
+  --panel2:rgba(12,53,99,.62);--line:rgba(67,174,255,.27);
+  --text:#f4f9ff;--muted:#a7c1df;--blue:#168cff;--cyan:#38d7ff;
+  --glow:0 0 32px rgba(0,139,255,.16);--radius:24px;
 }
 *{box-sizing:border-box}
+html{scroll-behavior:smooth}
 body{
-  margin:0;
-  font-family:system-ui,-apple-system,"Segoe UI",sans-serif;
-  color:var(--text);
-  background:radial-gradient(ellipse at top left,#193b5b,transparent 45%),var(--bg);
-  min-height:100vh;
+  margin:0;min-height:100vh;color:var(--text);
+  font-family:Inter,system-ui,-apple-system,"Segoe UI",sans-serif;
+  background:
+    radial-gradient(ellipse at 80% 0%,rgba(0,119,255,.22),transparent 36%),
+    radial-gradient(ellipse at 0% 75%,rgba(0,183,255,.12),transparent 34%),
+    linear-gradient(145deg,#020b1b,#061a36 55%,#031127);
 }
+body:before,body:after{
+  content:"";position:fixed;pointer-events:none;z-index:-1;
+  width:55vw;height:2px;filter:blur(1px);
+  background:linear-gradient(90deg,transparent,#078cff,#53e5ff,transparent);
+  box-shadow:0 0 24px #078cff;transform:rotate(-25deg)
+}
+body:before{top:13%;right:-12%}body:after{bottom:13%;left:-16%}
 button,input,textarea{font:inherit}
 button{cursor:pointer}
-header,main{max-width:1200px;margin:auto;padding:22px}
-header{display:flex;align-items:center;justify-content:space-between}
-.brand{font-size:24px;font-weight:850}
-.brand span{color:var(--blue)}
-.subtitle{color:var(--muted);font-size:12px}
+a{color:inherit;text-decoration:none}
+.app-shell{max-width:1600px;margin:auto;padding:22px;display:grid;grid-template-columns:230px minmax(0,1fr);gap:22px}
+.sidebar{
+  position:sticky;top:22px;height:calc(100vh - 44px);min-height:650px;
+  padding:22px 15px;border:1px solid var(--line);border-radius:26px;
+  background:linear-gradient(180deg,rgba(8,37,76,.9),rgba(3,18,40,.88));
+  box-shadow:var(--glow);display:flex;flex-direction:column;z-index:5
+}
+.brand{display:flex;align-items:center;gap:12px;padding:6px 8px 30px;font-size:24px;font-weight:900;letter-spacing:-1px}
+.brand-mark{width:43px;height:43px;border-radius:15px;display:grid;place-items:center;
+  color:#8deaff;font-size:25px;background:linear-gradient(145deg,#0d8cff55,#12d7ff20);
+  border:1px solid #36baff80;box-shadow:0 0 22px #078cff55}
+.brand span{display:block}.brand em{font-style:normal;color:#45caff}
+.nav{display:grid;gap:9px}
+.nav a{display:flex;align-items:center;gap:13px;padding:13px 14px;border-radius:15px;
+  color:#d4e8ff;font-weight:600;font-size:14px;border:1px solid transparent;transition:.2s}
+.nav a:hover,.nav a.active{background:linear-gradient(100deg,#087cf0aa,#0750a766);
+  border-color:#159cff88;box-shadow:0 0 20px #078cff2b;color:white}
+.nav-icon{width:23px;text-align:center;font-size:18px;color:#65dfff}
+.sidebar-bottom{margin-top:auto;padding:15px 12px;border-radius:17px;background:#0b2b50aa;
+  border:1px solid var(--line);color:var(--muted);font-size:12px;line-height:1.6}
+.content{min-width:0}
+.topbar{display:flex;align-items:center;gap:14px;margin:0 0 20px}
+.mobile-brand{display:none;font-weight:900;font-size:20px}
+.search{display:flex;gap:10px;flex:1;min-width:0}
+.search input,.chat-input,textarea{
+  min-width:0;width:100%;color:var(--text);background:rgba(22,65,112,.58);
+  border:1px solid #3a9ce866;border-radius:16px;padding:14px 17px;outline:none;
+  box-shadow:inset 0 1px 0 #ffffff0b;transition:.2s
+}
+.search input:focus,.chat-input:focus,textarea:focus{border-color:#37caff;box-shadow:0 0 0 3px #168cff25}
+.search input::placeholder,.chat-input::placeholder,textarea::placeholder{color:#a3bfdc}
+.btn{border:1px solid #42b5ff66;border-radius:15px;padding:12px 17px;color:white;
+  background:linear-gradient(135deg,#0d75dc,#0750a8);font-weight:700;transition:.2s}
+.btn:hover{filter:brightness(1.15);transform:translateY(-1px)}
+.btn.secondary{background:#0b2d55;border-color:var(--line)}
+.notify{width:48px;height:48px;border:1px solid var(--line);border-radius:16px;
+  background:#0b2b50;color:#dff7ff;font-size:20px}
+.chips{display:flex;flex-wrap:wrap;gap:8px;margin:0 0 18px}
+.chip{border:1px solid var(--line);background:#0a2a50a8;color:#d9efff;border-radius:30px;padding:8px 13px;font-size:12px}
+.chip:hover,.chip.active{background:#086bc4;border-color:#3ccaff}
+.dashboard{display:grid;grid-template-columns:minmax(0,1.65fr) minmax(290px,.85fr);gap:18px;align-items:start}
+.main-column,.side-column{display:grid;gap:18px;min-width:0}
 .card{
-  background:var(--panel);
-  border:1px solid var(--line);
-  border-radius:22px;
-  padding:22px;
-  backdrop-filter:blur(18px);
-  box-shadow:0 15px 40px #0002;
-  min-width:0;
+  min-width:0;padding:22px;border-radius:var(--radius);
+  background:linear-gradient(145deg,rgba(11,48,91,.88),rgba(5,25,53,.88));
+  border:1px solid var(--line);box-shadow:var(--glow),inset 0 1px 0 #ffffff0b;
+  backdrop-filter:blur(18px)
 }
-.grid{display:grid;grid-template-columns:1.5fr 1fr;gap:18px}
-.stack{display:grid;gap:18px;align-content:start}
-.search{display:flex;gap:8px;margin-bottom:16px}
-input,textarea{
-  background:#ffffff09;
-  color:var(--text);
-  border:1px solid var(--line);
-  border-radius:12px;
-  padding:12px;
-  min-width:0;
-}
-.search input{flex:1;width:100%}
-.btn{
-  background:#ffffff0c;
-  border:1px solid var(--line);
-  color:var(--text);
-  border-radius:12px;
-  padding:11px 15px;
-}
-.primary{background:linear-gradient(120deg,#65c9ff,#a99aff);color:#071322;border:0;font-weight:800}
-.chips{display:flex;flex-wrap:wrap;gap:8px;margin-bottom:20px}
-.chip{border:1px solid var(--line);background:#ffffff08;color:var(--text);border-radius:25px;padding:8px 13px}
-h2{font-size:17px;margin:0 0 18px}
-.city{font-size:27px;font-weight:800}
-.temp{font-size:76px;font-weight:850;letter-spacing:-4px;margin:18px 0 5px}
+.card h2{font-size:17px;margin:0 0 17px;letter-spacing:-.35px}
+.section-kicker{font-size:11px;font-weight:800;letter-spacing:1.7px;color:#72dfff}
+.hero{position:relative;overflow:hidden;min-height:310px;padding:25px;
+  background:linear-gradient(115deg,rgba(4,45,93,.95),rgba(6,81,148,.72)),
+  radial-gradient(circle at 75% 25%,#168cff66,transparent 35%)}
+.hero:after{content:"";position:absolute;inset:0;pointer-events:none;opacity:.25;
+  background:linear-gradient(125deg,transparent 45%,#39baff22 46%,transparent 70%)}
+.hero-top{display:flex;align-items:center;justify-content:space-between;gap:10px;position:relative;z-index:1}
+.city{font-size:28px;font-weight:850;letter-spacing:-1px;margin-top:8px}
+.hero-layout{display:grid;grid-template-columns:1fr auto;align-items:center;gap:18px;position:relative;z-index:1}
+.weather-main{display:flex;align-items:center;gap:22px;margin-top:12px}
+.hero-icon{font-size:67px;filter:drop-shadow(0 0 15px #49caff55)}
+.temp{font-size:clamp(62px,7vw,88px);font-weight:900;letter-spacing:-6px;line-height:1}
+.condition{font-size:17px;font-weight:700;margin-top:9px}
+.hero-metrics{display:grid;gap:12px;padding:17px 19px;border-radius:19px;
+  background:#0b3970a8;border:1px solid #6bcaff44;min-width:205px}
+.hero-metrics p{margin:0;font-size:13px;color:#e1f3ff}
+.hero-metrics strong{color:#fff}
 .muted{color:var(--muted);font-size:12px}
-.hero-icon{font-size:38px;color:var(--blue)}
-.metrics{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px}
-.metric{padding:14px;background:#ffffff06;border:1px solid #ffffff0c;border-radius:14px}
-.metric label{display:block;font-size:12px;color:var(--muted);margin-bottom:8px}
-.metric strong{font-size:20px}
-.hourly{display:flex;gap:10px;overflow-x:auto}
-.hour{min-width:75px;text-align:center;padding:12px 8px;border-radius:13px;background:#ffffff08}
-.hour div{margin:10px 0}
-.forecast-row{display:flex;align-items:center;justify-content:space-between;gap:10px;padding:13px 0;border-bottom:1px solid #ffffff0d;font-size:13px}
-.records{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:18px}
-.record{padding:18px;border:1px solid var(--line);border-radius:17px;background:var(--panel)}
-.record strong{display:block;font-size:25px;margin-top:8px}
-.ring{width:125px;height:125px;border-radius:50%;display:grid;place-items:center;background:conic-gradient(var(--blue) var(--score,0deg),#ffffff15 0)}
-.ring-inner{background:#101a2a;border-radius:50%;width:102px;height:102px;display:grid;place-items:center;text-align:center}
+.metrics{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:10px}
+.metric{padding:14px;border-radius:16px;background:#0b2e56a8;border:1px solid #2e85c544}
+.metric label{display:block;color:var(--muted);font-size:11px;margin-bottom:8px}
+.metric strong{font-size:18px}
+.hourly{display:flex;gap:10px;overflow-x:auto;padding-bottom:5px}
+.hour{min-width:78px;text-align:center;padding:13px 9px;border-radius:16px;background:#0a2b52;border:1px solid #2d80c544}
+.hour div{margin:9px 0}
+.forecast-row{display:grid;grid-template-columns:1.3fr 40px 1fr 45px;align-items:center;gap:10px;
+  padding:13px 2px;border-bottom:1px solid #ffffff12;font-size:13px}
+.forecast-row:last-child{border:0}
+.records{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.record{padding:17px;border-radius:18px;background:linear-gradient(145deg,#0b315e,#091f40);
+  border:1px solid var(--line);font-size:13px;color:#cce7ff}
+.record strong{display:block;font-size:25px;margin-top:8px;color:#fff}
+.record:first-child strong{color:#ff9b75}.record:last-child strong{color:#4cddff}
+.ring{width:118px;height:118px;flex:0 0 auto;border-radius:50%;display:grid;place-items:center;
+  background:conic-gradient(#28c9ff var(--score,0deg),#ffffff18 0)}
+.ring-inner{width:94px;height:94px;border-radius:50%;display:grid;place-items:center;text-align:center;background:#071b36}
 .ring-inner strong{font-size:27px}
-.radar{width:100%;height:320px;border:0;border-radius:15px}
-.chat-messages{height:230px;overflow:auto;display:flex;flex-direction:column;gap:10px;margin-bottom:12px}
-.message{padding:12px;border-radius:13px;background:#ffffff09;font-size:13px;line-height:1.6;overflow-wrap:anywhere;white-space:pre-wrap}
-.message.user{align-self:flex-end;background:#65c9ff19}
+.chat-card{position:sticky;top:20px}
+.ai-head{text-align:center;padding:5px 0 18px}
+.ai-avatar{width:112px;height:112px;margin:0 auto 12px;border-radius:50%;display:grid;place-items:center;
+  font-size:60px;background:radial-gradient(circle,#146fbd,#061b3b 70%);border:1px solid #25baff88;
+  box-shadow:0 0 35px #078cff44}
+.ai-head h2{font-size:27px;margin:0 0 5px}
+.chat-messages{height:235px;overflow:auto;display:flex;flex-direction:column;gap:10px;margin:10px 0 14px}
+.message{padding:12px 14px;border-radius:15px;background:#123b69;font-size:13px;line-height:1.6;
+  overflow-wrap:anywhere;white-space:pre-wrap;border:1px solid #4ca9ed22}
+.message.user{align-self:flex-end;background:#075eae}
+.chat-input-row{display:flex;gap:8px}
+.chat-input{padding:12px}
+.chat-actions{display:flex;flex-wrap:wrap;gap:8px;margin-top:10px}
+.chat-actions .btn{font-size:12px;padding:9px 11px}
+.radar{width:100%;height:300px;border:0;border-radius:15px}
 .form-stack{display:grid;gap:10px}
-.feed{display:grid;gap:10px;margin-top:15px}
-.post{padding:13px;border:1px solid var(--line);border-radius:13px;font-size:13px;overflow-wrap:anywhere}
-.quiz-option{display:block;width:100%;text-align:left;margin:8px 0}
-footer{text-align:center;color:var(--muted);padding:30px;font-size:12px}
-@media(max-width:800px){.grid{grid-template-columns:1fr}header,main{padding:15px}.temp{font-size:65px}}
-@media(max-width:430px){.records{gap:8px}.record{padding:12px}.record strong{font-size:21px}.card{padding:16px}}
+.form-stack textarea{min-height:90px;resize:vertical}
+.feed{display:grid;gap:10px;margin-top:14px}
+.post{padding:13px;border:1px solid var(--line);border-radius:14px;background:#0a2b50;font-size:13px}
+#cebimde-trafik{max-width:100%;margin:0;padding:22px;border-radius:var(--radius);
+  background:linear-gradient(145deg,rgba(11,48,91,.88),rgba(5,25,53,.88));
+  border:1px solid var(--line);box-shadow:var(--glow)}
+#cebimde-trafik .trafik-baslik h2{margin:0 0 8px}
+#cebimde-trafik .trafik-baslik p,#cebimde-trafik .trafik-not{color:var(--muted);font-size:12px}
+#cebimde-trafik .trafik-anahtar{display:flex;flex-wrap:wrap;gap:15px;margin:16px 0;font-size:12px}
+#cebimde-trafik-haritasi{width:100%;height:360px;border-radius:15px;overflow:hidden;background:#071b36;z-index:0}
+footer{text-align:center;color:var(--muted);padding:25px 10px;font-size:12px}
+[role=alert]{color:#ffb0a6;font-size:12px}
+@media(max-width:1100px){
+ .app-shell{grid-template-columns:190px minmax(0,1fr);padding:15px;gap:15px}
+ .dashboard{grid-template-columns:minmax(0,1fr)}
+ .chat-card{position:static}
+ .side-column{grid-template-columns:repeat(2,minmax(0,1fr))}
+ .chat-card{grid-row:span 2}
+}
+@media(max-width:760px){
+ .app-shell{display:block;padding:12px}
+ .sidebar{position:static;height:auto;min-height:0;padding:12px;margin-bottom:14px}
+ .brand{padding:3px 5px 12px;font-size:20px}
+ .brand-mark{width:36px;height:36px}
+ .nav{display:flex;overflow-x:auto;padding-bottom:3px}
+ .nav a{white-space:nowrap;padding:10px 12px;font-size:12px}
+ .nav-icon{font-size:15px}
+ .sidebar-bottom{display:none}
+ .topbar{gap:8px}.notify{display:none}
+ .search{gap:7px}.search input{padding:12px}
+ .search .btn{padding:10px 12px}
+ .side-column{grid-template-columns:1fr}
+ .hero-layout{grid-template-columns:1fr}
+ .hero-metrics{grid-template-columns:repeat(2,minmax(0,1fr));min-width:0}
+ .hero{min-height:0}
+}
+@media(max-width:480px){
+ .card{padding:16px;border-radius:19px}
+ .city{font-size:24px}
+ .weather-main{gap:12px}.hero-icon{font-size:49px}.temp{font-size:65px}
+ .metrics{grid-template-columns:repeat(2,minmax(0,1fr))}
+ .records{gap:8px}.record{padding:13px}.record strong{font-size:21px}
+ .forecast-row{grid-template-columns:1.2fr 28px 1fr 38px;font-size:12px}
+ .ring{width:100px;height:100px}.ring-inner{width:80px;height:80px}
+ #cebimde-trafik{padding:16px}
+ #cebimde-trafik-haritasi{height:300px}
+}
 </style>
 </head>
 <body>
-<header>
-  <div>
-    <div class="brand">Cebimde <span>Hava</span></div>
-    <div class="subtitle">Hava cebinde, keyfin yerinde.</div>
-  </div>
-  <span class="muted">Canlı hava durumu</span>
-</header>
+<div class="app-shell">
+  <aside class="sidebar">
+    <div class="brand"><div class="brand-mark">☁</div><div><span>Cebimde</span><em>Hava</em></div></div>
+    <nav class="nav" aria-label="Ana menü">
+      <a class="active" href="#anasayfa"><span class="nav-icon">⌂</span>Ana Sayfa</a>
+      <a href="#tahmin"><span class="nav-icon">◷</span>Tahmin</a>
+      <a href="#radar"><span class="nav-icon">▧</span>Haritalar</a>
+      <a href="#trafik"><span class="nav-icon">⌁</span>Trafik</a>
+      <a href="#rekorlar"><span class="nav-icon">♨</span>Türkiye Rekorları</a>
+      <a href="#ayaz"><span class="nav-icon">✧</span>Ayaz AI</a>
+      <a href="#topluluk"><span class="nav-icon">⚙</span>Topluluk</a>
+    </nav>
+    <div class="sidebar-bottom">Gökyüzünü takip et,<br><strong style="color:#e7f8ff">gününü planla.</strong><br><span>Canlı hava durumu</span></div>
+  </aside>
 
-<main>
-  <form class="search" id="searchForm">
-    <input id="cityInput" placeholder="Şehir ara kanka..." aria-label="Şehir ara">
-    <button class="btn primary">Ara</button>
-    <button class="btn" type="button" id="gpsBtn">GPS</button>
-  </form>
-
-  <div class="chips">
-    <button class="chip" data-city="Erzurum">Erzurum</button>
-    <button class="chip" data-city="Bayburt">Bayburt</button>
-    <button class="chip" data-city="İstanbul">İstanbul</button>
-    <button class="chip" data-city="Ankara">Ankara</button>
-    <button class="chip" data-city="İzmir">İzmir</button>
-    <button class="chip" data-city="Antalya">Antalya</button>
-    <button class="chip" data-city="Yalova">Yalova</button>
-  </div>
-
-  <div class="records">
-    <div class="record">Türkiye'nin soğuğu<div id="coldCity">Yükleniyor...</div><strong id="coldTemp">--°</strong></div>
-    <div class="record">Türkiye'nin sıcağı<div id="hotCity">Yükleniyor...</div><strong id="hotTemp">--°</strong></div>
-  </div>
-
-  <div class="grid">
-    <div class="stack">
-      <section class="card">
-        <div class="muted">ŞU ANKİ HAVA</div>
-        <div class="city" id="currentCity">İstanbul</div>
-        <div class="muted" id="currentDate">Güncel hava bilgileri</div>
-        <div class="hero-icon" id="weatherIcon">☁</div>
-        <div class="temp" id="temperature">--°</div>
-        <div id="condition">Hava bilgisi yükleniyor...</div>
-        <p class="muted" id="feelsLike">Hissedilen: --°</p>
-        <p class="muted" id="sunTimes">Gün doğumu ve batımı: --</p>
-        <p class="muted" id="airQuality">Hava kalitesi: --</p>
-        <p id="mainError" role="alert"></p>
-      </section>
-
-      <section class="card">
-        <h2>Hava detayları</h2>
-        <div class="metrics">
-          <div class="metric"><label>Rüzgâr</label><strong id="wind">--</strong></div>
-          <div class="metric"><label>Nem</label><strong id="humidity">--</strong></div>
-          <div class="metric"><label>Görüş</label><strong id="visibility">--</strong></div>
-          <div class="metric"><label>Basınç</label><strong id="pressure">--</strong></div>
-          <div class="metric"><label>Bulut</label><strong id="clouds">--</strong></div>
-          <div class="metric"><label>UV</label><strong id="uv">--</strong></div>
-          <div class="metric"><label>Yağış ihtimali</label><strong id="rainChance">--</strong></div>
-          <div class="metric"><label>Çiğ noktası</label><strong id="dewPoint">--</strong></div>
-        </div>
-      </section>
-
-      <section class="card">
-        <h2>Saatlik tahmin · 3 saatlik aralıklar</h2>
-        <div class="hourly" id="hourlyForecast">Yükleniyor...</div>
-      </section>
-
-      <section class="card">
-        <h2>5 günlük tahmin</h2>
-        <div id="dailyForecast">Yükleniyor...</div>
-      </section>
-
-      <section class="card">
-        <h2>Kış Pusulası</h2>
-        <div style="display:flex;align-items:center;gap:22px;flex-wrap:wrap">
-          <div class="ring" id="coldRing">
-            <div class="ring-inner"><div><strong id="coldScore">--</strong><div class="muted">/100</div></div></div>
-          </div>
-          <div style="flex:1;min-width:150px">
-            <strong id="coldLevel">Hesaplanıyor...</strong>
-            <p class="muted" id="coldExplanation">Sıcaklık verisi bekleniyor.</p>
-          </div>
-        </div>
-      </section>
+  <main class="content">
+    <div class="topbar">
+      <div class="mobile-brand">Cebimde <span style="color:#45caff">Hava</span></div>
+      <form class="search" id="searchForm">
+        <input id="cityInput" placeholder="Şehir ara... (ör. İstanbul, Yalova)" aria-label="Şehir ara">
+        <button class="btn" type="submit">Ara</button>
+        <button class="btn secondary" type="button" id="gpsBtn" title="Konumumu bul">GPS</button>
+      </form>
+      <button class="notify" type="button" aria-label="Bildirimler">♧</button>
     </div>
 
-    <div class="stack">
-      <section class="card">
-        <h2>Ayaz AI · Mahalle meteoroloğun</h2>
-        <div class="chat-messages" id="chatMessages" aria-live="polite">
-          <div class="message">Selam kanka! Ben Ayaz. Hava hakkında ne merak ediyorsun?</div>
-        </div>
-        <form class="search" id="chatForm">
-          <input id="chatInput" placeholder="Şemsiye alayım mı kanka?" maxlength="500">
-          <button class="btn primary" id="sendChat">Sor</button>
-        </form>
-        <button class="btn" type="button" id="speakBtn">Son cevabı sesli oku</button>
-        <button class="btn" type="button" id="stopSpeakBtn">Sesi durdur</button>
-        <p class="muted">OpenAI anahtarını canlı sitede güvenli sunucu tarafında sakla.</p>
-        <p id="aiError" role="alert"></p>
-      </section>
-
-      <section class="card">
-        <h2>Canlı Radar</h2>
-        <iframe id="radarFrame" class="radar" title="Windy hava radarı" loading="lazy" allow="geolocation" src="https://embed.windy.com/embed2.html?lat=41.01&lon=28.97&detailLat=41.01&detailLon=28.97&width=650&height=450&zoom=6&level=surface&overlay=radar&product=radar&menu=&message=true"></iframe>
-      </section>
-
-      <section class="card">
-        <h2>Halkın Kürsüsü</h2>
-        <form id="communityForm" class="form-stack">
-          <input id="postAuthor" placeholder="Adın / Mahallen" maxlength="50" required>
-          <textarea id="postMessage" placeholder="Sokakta hava nasıl?" maxlength="300" required></textarea>
-          <button class="btn primary">Raporu paylaş</button>
-        </form>
-        <div class="feed" id="communityFeed"></div>
-        <p class="muted">Paylaşımlar sadece bu tarayıcı oturumunda görünür; diğer kullanıcılara gönderilmez.</p>
-      </section>
+    <div class="chips" aria-label="Popüler şehirler">
+      <button class="chip" data-city="Erzurum">Erzurum</button>
+      <button class="chip" data-city="Bayburt">Bayburt</button>
+      <button class="chip active" data-city="İstanbul">İstanbul</button>
+      <button class="chip" data-city="Ankara">Ankara</button>
+      <button class="chip" data-city="İzmir">İzmir</button>
+      <button class="chip" data-city="Antalya">Antalya</button>
+      <button class="chip" data-city="Yalova">Yalova</button>
     </div>
-  </div>
-  <footer>Cebimde Hava · Gökyüzünü takip et, gününü planla.</footer>
-</main>
 
+    <div class="dashboard" id="anasayfa">
+      <div class="main-column">
+        <section class="card hero">
+          <div class="hero-top"><div><div class="section-kicker">GÜNCEL HAVA DURUMU</div><div class="city" id="currentCity">İstanbul</div><div class="muted" id="currentDate">Güncel hava bilgileri</div></div><span class="muted">● CANLI</span></div>
+          <div class="hero-layout">
+            <div class="weather-main"><div class="hero-icon" id="weatherIcon">☁</div><div><div class="temp" id="temperature">--°</div><div id="condition" class="condition">Hava bilgisi yükleniyor...</div><p class="muted" id="feelsLike">Hissedilen: --°</p></div></div>
+            <div class="hero-metrics">
+              <p>◉ <strong id="sunTimes">Gün doğumu ve batımı: --</strong></p>
+              <p>◌ <strong id="airQuality">Hava kalitesi: --</strong></p>
+              <p>☂ <strong id="humidity">Nem: --</strong></p>
+              <p>➤ <strong id="wind">Rüzgâr: --</strong></p>
+            </div>
+          </div>
+          <p id="mainError" role="alert"></p>
+        </section>
+
+        <section class="card">
+          <h2>Hava detayları</h2>
+          <div class="metrics">
+            <div class="metric"><label>Rüzgâr</label><strong id="windDetail">--</strong></div>
+            <div class="metric"><label>Nem</label><strong id="humidityDetail">--</strong></div>
+            <div class="metric"><label>Görüş</label><strong id="visibility">--</strong></div>
+            <div class="metric"><label>Basınç</label><strong id="pressure">--</strong></div>
+            <div class="metric"><label>Bulut</label><strong id="clouds">--</strong></div>
+            <div class="metric"><label>UV</label><strong id="uv">--</strong></div>
+            <div class="metric"><label>Yağış ihtimali</label><strong id="rainChance">--</strong></div>
+            <div class="metric"><label>Çiğ noktası</label><strong id="dewPoint">--</strong></div>
+          </div>
+        </section>
+
+        <section class="card">
+          <h2>Saatlik tahmin · 3 saatlik aralıklar</h2>
+          <div class="hourly" id="hourlyForecast">Yükleniyor...</div>
+        </section>
+
+        <section class="card" id="tahmin">
+          <h2>5 günlük tahmin</h2>
+          <div id="dailyForecast">Yükleniyor...</div>
+        </section>
+
+        <section class="card">
+          <h2>Kış Pusulası</h2>
+          <div style="display:flex;align-items:center;gap:20px;flex-wrap:wrap">
+            <div class="ring" id="coldRing"><div class="ring-inner"><div><strong id="coldScore">--</strong><div class="muted">/100</div></div></div></div>
+            <div style="flex:1;min-width:150px"><strong id="coldLevel">Hesaplanıyor...</strong><p class="muted" id="coldExplanation">Sıcaklık verisi bekleniyor.</p></div>
+          </div>
+        </section>
+      </div>
+
+      <div class="side-column">
+        <section class="card chat-card" id="ayaz">
+          <div class="ai-head"><div class="ai-avatar">🤖</div><h2>Ayaz AI</h2><div class="muted">Mahalle meteoroloğun</div></div>
+          <div class="chat-messages" id="chatMessages" aria-live="polite"><div class="message">Selam kanka! Ben Ayaz. Hava hakkında ne merak ediyorsun?</div></div>
+          <form class="chat-input-row" id="chatForm"><input class="chat-input" id="chatInput" placeholder="Şemsiye alayım mı?" maxlength="500"><button class="btn" id="sendChat">➤</button></form>
+          <div class="chat-actions"><button class="btn secondary" type="button" id="speakBtn">Cevabı sesli oku</button><button class="btn secondary" type="button" id="stopSpeakBtn">Sesi durdur</button></div>
+          <p class="muted">Ayaz, güncel hava verilerini kullanarak yanıt verir.</p><p id="aiError" role="alert"></p>
+        </section>
+
+        <section class="card" id="radar"><h2>Canlı Hava Radarı</h2>
+          <iframe id="radarFrame" class="radar" title="Windy hava radarı" loading="lazy" allow="geolocation" src="https://embed.windy.com/embed2.html?lat=41.01&lon=28.97&detailLat=41.01&detailLon=28.97&width=650&height=450&zoom=6&level=surface&overlay=radar&product=radar&menu=&message=true"></iframe>
+        </section>
+
+        <section class="card" id="rekorlar"><h2>Türkiye'nin en sıcak ve en soğuk noktaları</h2>
+          <div class="records">
+            <div class="record">En Soğuk<div id="coldCity">Yükleniyor...</div><strong id="coldTemp">--°</strong></div>
+            <div class="record">En Sıcak<div id="hotCity">Yükleniyor...</div><strong id="hotTemp">--°</strong></div>
+          </div>
+        </section>
+
+        <section class="card" id="topluluk"><h2>Halkın Kürsüsü</h2>
+          <form id="communityForm" class="form-stack">
+            <input id="postAuthor" class="chat-input" placeholder="Adın / Mahallen" maxlength="50" required>
+            <textarea id="postMessage" placeholder="Sokakta hava nasıl?" maxlength="300" required></textarea>
+            <button class="btn" type="submit">Raporu paylaş</button>
+          </form>
+          <div class="feed" id="communityFeed"></div>
+          <p class="muted">Paylaşımlar sadece bu tarayıcı oturumunda görünür; diğer kullanıcılara gönderilmez.</p>
+        </section>
+      </div>
+    </div>
+
+    <section id="trafik" style="margin-top:18px">
+      <div id="cebimde-trafik">
+        <div class="trafik-baslik"><h2>Canlı Trafik Yoğunluğu</h2><p>İstanbul ve çevresindeki yol trafiğini haritada incele.</p></div>
+        <div class="trafik-anahtar"><span>🟢 Akıcı</span><span>🟡 Yoğunlaşıyor</span><span>🔴 Yoğun</span></div>
+        <div id="cebimde-trafik-haritasi"></div>
+        <p class="trafik-not">Trafik verileri TomTom tarafından sağlanır.</p>
+      </div>
+    </section>
+    <footer>Cebimde Hava · Gökyüzünü takip et, gününü planla.</footer>
+  </main>
+</div>
+
+<link
+  rel="stylesheet"
+  href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"
+/>
+
+
+<script>
+/* Görsel yerleşimdeki ortak metrikler, mevcut JavaScript kimlikleriyle uyumlu tutuldu. */
+const syncMetric = (sourceId, targetId, prefix="") => {
+  const source = document.getElementById(sourceId), target = document.getElementById(targetId);
+  if(source && target){ const observer = new MutationObserver(()=>target.textContent=prefix+source.textContent); observer.observe(source,{childList:true,characterData:true,subtree:true}); target.textContent=prefix+source.textContent; }
+};
+document.addEventListener("DOMContentLoaded",()=>{
+  syncMetric("wind","windDetail"); syncMetric("humidity","humidityDetail");
+  document.querySelectorAll(".nav a").forEach(link=>link.addEventListener("click",()=>{
+    document.querySelectorAll(".nav a").forEach(item=>item.classList.remove("active"));link.classList.add("active");
+  }));
+});
+</script>
 <script>
 "use strict";
 
 // API anahtarlarını buraya gir.
-const OWM_API_KEY = "528336ccec76b916918cca15ab14ed3a";
+const OWM_API_KEY = "YENI_OPENWEATHER_API_ANAHTARINI_BURAYA_EKLE";
 const $ = id => document.getElementById(id);
 const state = {
   city: "İstanbul",
@@ -734,31 +857,122 @@ document.getElementById("stopSpeakBtn").addEventListener("click", function () {
 });
 
 </script>
-  
-<!-- Cebimde Hava - Trafik Yoğunluğu -->
-<section id="cebimde-trafik">
-  <div class="trafik-baslik">
-    <h2>Canlı Trafik Yoğunluğu</h2>
-    <p>İstanbul ve çevresindeki yol trafiğini haritada incele.</p>
-  </div>
-
-  <div class="trafik-anahtar">
-    <span>🟢 Akıcı</span>
-    <span>🟡 Yoğunlaşıyor</span>
-    <span>🔴 Yoğun</span>
-  </div>
-
-  <div id="cebimde-trafik-haritasi"></div>
-  <p class="trafik-not">
-    Trafik verileri TomTom tarafından sağlanır.
-  </p>
-</section>
-
 <link
   rel="stylesheet"
   href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"
 />
 
+<style>
+  #cebimde-trafik {
+    max-width: 1100px;
+    margin: 35px auto;
+    padding: 20px;
+    font-family: Arial, sans-serif;
+    color: inherit;
+  }
+
+  #cebimde-trafik .trafik-baslik h2 {
+    margin-bottom: 8px;
+  }
+
+  #cebimde-trafik .trafik-baslik p,
+  #cebimde-trafik .trafik-not {
+    opacity: 0.8;
+  }
+
+  #cebimde-trafik .trafik-anahtar {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 15px;
+    margin: 18px 0;
+    font-size: 14px;
+  }
+
+  #cebimde-trafik-haritasi {
+    width: 100%;
+    height: 430px;
+    border-radius: 14px;
+    overflow: hidden;
+    background: #e5e7eb;
+    z-index: 0;
+  }
+
+  #cebimde-trafik .trafik-not {
+    font-size: 12px;
+    margin-top: 10px;
+  }
+
+  @media (max-width: 600px) {
+    #cebimde-trafik {
+      padding: 12px;
+    }
+
+    #cebimde-trafik-haritasi {
+      height: 340px;
+    }
+  }
+</style>
+
+<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+
+<script>
+(function () {
+  const mapElement = document.getElementById(
+    "cebimde-trafik-haritasi"
+  );
+
+  if (!mapElement || mapElement.dataset.initialized) return;
+  mapElement.dataset.initialized = "true";
+
+  // Kendi TomTom API anahtarını buraya gir.
+  const TOMTOM_API_KEY = "TOMTOM_API_ANAHTARINI_BURAYA_EKLE";
+
+  if (typeof L === "undefined") {
+    mapElement.textContent = "Harita kütüphanesi yüklenemedi.";
+    return;
+  }
+
+  if (!TOMTOM_API_KEY || TOMTOM_API_KEY.includes("BURAYA_EKLE")) {
+    mapElement.textContent =
+      "Trafik haritasını etkinleştirmek için TomTom API anahtarını ekleyin.";
+    return;
+  }
+
+  const map = L.map(mapElement).setView(
+    [41.0082, 28.9784],
+    11
+  );
+
+  L.tileLayer(
+    "https://tile.openstreetmap.org/{z}/{x}/{y}.png",
+    {
+      maxZoom: 19,
+      attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a>'
+    }
+  ).addTo(map);
+
+  const trafikKatmani = L.tileLayer(
+    "https://api.tomtom.com/traffic/map/4/tile/flow/relative0/{z}/{x}/{y}.png?key=" +
+      encodeURIComponent(TOMTOM_API_KEY),
+    {
+      tileSize: 256,
+      maxZoom: 22,
+      opacity: 0.85,
+      attribution: '&copy; TomTom Traffic'
+    }
+  ).addTo(map);
+
+  // Haritayı belirli aralıklarla yenile.
+  window.setInterval(function () {
+    trafikKatmani.redraw();
+  }, 60000);
+
+  // Harita boyutunu gerektiğinde yeniden hesapla.
+  window.setTimeout(function () {
+    map.invalidateSize();
+  }, 300);
+})();
+</script>
 <style>
   #cebimde-trafik {
     max-width: 1100px;
@@ -870,6 +1084,7 @@ document.getElementById("stopSpeakBtn").addEventListener("click", function () {
   }, 300);
 })();
 </script>
+
 
 </body>
 </html>
