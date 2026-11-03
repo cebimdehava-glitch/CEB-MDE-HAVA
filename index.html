@@ -247,59 +247,7 @@ footer{text-align:center;color:var(--muted);padding:25px 10px;font-size:12px}
     </div>
 
 
-    <section class="card" id="barajlar">
-      <div class="section-kicker">ŞEHİR ŞEHİR SU DURUMU</div>
-      <h2 style="margin-top:8px">Baraj Doluluk Oranları</h2>
-      <p class="muted">Bir il seç, o ildeki barajların güncel doluluk oranlarını görüntüle.</p>
-      <form class="baraj-search" id="damSearchForm">
-        <input id="damCityInput" list="damCityOptions" placeholder="Şehir ara... (ör. İstanbul, Yalova)" aria-label="Baraj verisi için şehir ara" value="İstanbul" autocomplete="off">
-        <datalist id="damCityOptions">
-          <option value="Adana"><option value="Adıyaman"><option value="Afyonkarahisar"><option value="Ağrı">
-          <option value="Amasya"><option value="Ankara"><option value="Antalya"><option value="Artvin">
-          <option value="Aydın"><option value="Balıkesir"><option value="Bilecik"><option value="Bingöl">
-          <option value="Bitlis"><option value="Bolu"><option value="Burdur"><option value="Bursa">
-          <option value="Çanakkale"><option value="Çankırı"><option value="Çorum"><option value="Denizli">
-          <option value="Diyarbakır"><option value="Edirne"><option value="Elazığ"><option value="Erzincan">
-          <option value="Erzurum"><option value="Eskişehir"><option value="Gaziantep"><option value="Giresun">
-          <option value="Gümüşhane"><option value="Hakkari"><option value="Hatay"><option value="Isparta">
-          <option value="Mersin"><option value="İstanbul"><option value="İzmir"><option value="Kars">
-          <option value="Kastamonu"><option value="Kayseri"><option value="Kırklareli"><option value="Kırşehir">
-          <option value="Kocaeli"><option value="Konya"><option value="Kütahya"><option value="Malatya">
-          <option value="Manisa"><option value="Kahramanmaraş"><option value="Mardin"><option value="Muğla">
-          <option value="Muş"><option value="Nevşehir"><option value="Niğde"><option value="Ordu">
-          <option value="Rize"><option value="Sakarya"><option value="Samsun"><option value="Siirt">
-          <option value="Sinop"><option value="Sivas"><option value="Tekirdağ"><option value="Tokat">
-          <option value="Trabzon"><option value="Tunceli"><option value="Şanlıurfa"><option value="Uşak">
-          <option value="Van"><option value="Yozgat"><option value="Zonguldak"><option value="Aksaray">
-          <option value="Bayburt"><option value="Karaman"><option value="Kırıkkale"><option value="Batman">
-          <option value="Şırnak"><option value="Bartın"><option value="Ardahan"><option value="Iğdır">
-          <option value="Yalova"><option value="Karabük"><option value="Kilis"><option value="Osmaniye"><option value="Düzce">
-        </datalist>
-        <button class="btn" type="submit" id="damSearchButton">Barajları Ara</button>
-      </form>
-      <div id="damStatus" class="baraj-status" role="status" aria-live="polite">İstanbul verileri yükleniyor...</div>
-      <div id="damResults" hidden>
-        <div class="baraj-summary">
-          <div>
-            <div class="muted" id="damProvinceName">İl geneli</div>
-            <div class="baraj-big" id="damOverallRate">--%</div>
-          </div>
-          <div>
-            <strong>İl genelindeki doluluk</strong>
-            <div class="baraj-track"><div class="baraj-fill" id="damOverallFill"></div></div>
-            <div class="muted" id="damOverallNote">Resmî kaynaklardan derlenen son ölçüm</div>
-            <div class="baraj-meta">
-              <span class="muted" id="damMeasuredAt">Ölçüm tarihi: --</span>
-              <span class="muted" id="damAuthority">Kaynak: --</span>
-            </div>
-          </div>
-        </div>
-        <h2 style="margin-top:20px">Barajlar</h2>
-        <div class="baraj-list" id="damList"></div>
-      </div>
-      <p class="baraj-source">Veri kaynağı: <a href="https://www.dolulukorani.com/veri" target="_blank" rel="noopener noreferrer" style="color:#72dfff;text-decoration:underline">dolulukorani.com açık veri API'si</a> · Veriler resmî kurum yayınlarından derlenir. Otomatik yenileme: 30 dakikada bir.</p>
-      <p id="damError" role="alert"></p>
-    </section>
+
 
     <div class="dashboard" id="anasayfa">
       <div class="main-column">
@@ -382,6 +330,60 @@ footer{text-align:center;color:var(--muted);padding:25px 10px;font-size:12px}
       </div>
     </div>
 
+    <section class="card" id="barajlar">
+      <div class="section-kicker">ŞEHİR ŞEHİR SU DURUMU</div>
+      <h2 style="margin-top:8px">Baraj Doluluk Oranları</h2>
+      <p class="muted">Bir il seç, o ildeki barajların güncel doluluk oranlarını görüntüle.</p>
+      <form class="baraj-search" id="damSearchForm">
+        <input id="damCityInput" list="damCityOptions" placeholder="Şehir ara... (ör. İstanbul, Yalova)" aria-label="Baraj verisi için şehir ara" value="İstanbul" autocomplete="off">
+        <datalist id="damCityOptions">
+          <option value="Adana"><option value="Adıyaman"><option value="Afyonkarahisar"><option value="Ağrı">
+          <option value="Amasya"><option value="Ankara"><option value="Antalya"><option value="Artvin">
+          <option value="Aydın"><option value="Balıkesir"><option value="Bilecik"><option value="Bingöl">
+          <option value="Bitlis"><option value="Bolu"><option value="Burdur"><option value="Bursa">
+          <option value="Çanakkale"><option value="Çankırı"><option value="Çorum"><option value="Denizli">
+          <option value="Diyarbakır"><option value="Edirne"><option value="Elazığ"><option value="Erzincan">
+          <option value="Erzurum"><option value="Eskişehir"><option value="Gaziantep"><option value="Giresun">
+          <option value="Gümüşhane"><option value="Hakkari"><option value="Hatay"><option value="Isparta">
+          <option value="Mersin"><option value="İstanbul"><option value="İzmir"><option value="Kars">
+          <option value="Kastamonu"><option value="Kayseri"><option value="Kırklareli"><option value="Kırşehir">
+          <option value="Kocaeli"><option value="Konya"><option value="Kütahya"><option value="Malatya">
+          <option value="Manisa"><option value="Kahramanmaraş"><option value="Mardin"><option value="Muğla">
+          <option value="Muş"><option value="Nevşehir"><option value="Niğde"><option value="Ordu">
+          <option value="Rize"><option value="Sakarya"><option value="Samsun"><option value="Siirt">
+          <option value="Sinop"><option value="Sivas"><option value="Tekirdağ"><option value="Tokat">
+          <option value="Trabzon"><option value="Tunceli"><option value="Şanlıurfa"><option value="Uşak">
+          <option value="Van"><option value="Yozgat"><option value="Zonguldak"><option value="Aksaray">
+          <option value="Bayburt"><option value="Karaman"><option value="Kırıkkale"><option value="Batman">
+          <option value="Şırnak"><option value="Bartın"><option value="Ardahan"><option value="Iğdır">
+          <option value="Yalova"><option value="Karabük"><option value="Kilis"><option value="Osmaniye"><option value="Düzce">
+        </datalist>
+        <button class="btn" type="submit" id="damSearchButton">Barajları Ara</button>
+      </form>
+      <div id="damStatus" class="baraj-status" role="status" aria-live="polite">İstanbul verileri yükleniyor...</div>
+      <div id="damResults" hidden>
+        <div class="baraj-summary">
+          <div>
+            <div class="muted" id="damProvinceName">İl geneli</div>
+            <div class="baraj-big" id="damOverallRate">--%</div>
+          </div>
+          <div>
+            <strong>İl genelindeki doluluk</strong>
+            <div class="baraj-track"><div class="baraj-fill" id="damOverallFill"></div></div>
+            <div class="muted" id="damOverallNote">Resmî kaynaklardan derlenen son ölçüm</div>
+            <div class="baraj-meta">
+              <span class="muted" id="damMeasuredAt">Ölçüm tarihi: --</span>
+              <span class="muted" id="damAuthority">Kaynak: --</span>
+            </div>
+          </div>
+        </div>
+        <h2 style="margin-top:20px">Barajlar</h2>
+        <div class="baraj-list" id="damList"></div>
+      </div>
+      <p class="baraj-source">Veri kaynağı: <a href="https://www.dolulukorani.com/veri" target="_blank" rel="noopener noreferrer" style="color:#72dfff;text-decoration:underline">dolulukorani.com açık veri API'si</a> · Veriler resmî kurum yayınlarından derlenir. Otomatik yenileme: 30 dakikada bir.</p>
+      <p id="damError" role="alert"></p>
+    </section>
+
     <section id="trafik" style="margin-top:18px">
       <div id="cebimde-trafik">
         <div class="trafik-baslik"><h2>Canlı Trafik Yoğunluğu</h2><p>İstanbul ve çevresindeki yol trafiğini haritada incele.</p></div>
@@ -417,7 +419,7 @@ document.addEventListener("DOMContentLoaded",()=>{
 "use strict";
 
 // API anahtarlarını buraya gir.
-const OWM_API_KEY = "OPENWEATHERMAP_API_KEY_BURAYA_GIR";
+const OWM_API_KEY = "528336ccec76b916918cca15ab14ed3a";
 const $ = id => document.getElementById(id);
 const state = {
   city: "İstanbul",
@@ -1001,7 +1003,7 @@ document.getElementById("stopSpeakBtn").addEventListener("click", function () {
   mapElement.dataset.initialized = "true";
 
   // Kendi TomTom API anahtarını buraya gir.
-  const TOMTOM_API_KEY = "TOMTOM_API_KEY_BURAYA_EKLE";
+  const TOMTOM_API_KEY = "hwO8lLQSzwFEgnTlM8DztSGXXDPj3UnJ";
 
   if (typeof L === "undefined") {
     mapElement.textContent = "Harita kütüphanesi yüklenemedi.";
@@ -1112,7 +1114,7 @@ document.getElementById("stopSpeakBtn").addEventListener("click", function () {
   mapElement.dataset.initialized = "true";
 
   // Kendi TomTom API anahtarını buraya gir.
-  const TOMTOM_API_KEY = "TOMTOM_API_ANAHTARINI_BURAYA_YAZ";
+  const TOMTOM_API_KEY = "hwO8lLQSzwFEgnTlM8DztSGXXDPj3UnJ";
 
   if (typeof L === "undefined") {
     mapElement.textContent = "Harita kütüphanesi yüklenemedi.";
