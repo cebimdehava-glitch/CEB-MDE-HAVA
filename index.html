@@ -186,6 +186,26 @@ footer{text-align:center;color:var(--muted);padding:25px 10px;font-size:12px}
  #cebimde-trafik{padding:16px}
  #cebimde-trafik-haritasi{height:300px}
 }
+
+/* Baraj doluluk bölümü */
+#barajlar{margin:18px 0 0}
+#barajlar .baraj-search{display:flex;gap:10px;margin:14px 0 18px}
+#barajlar .baraj-search input{min-width:0;flex:1;color:var(--text);background:rgba(22,65,112,.58);border:1px solid #3a9ce866;border-radius:16px;padding:14px 17px;outline:none}
+#barajlar .baraj-search input:focus{border-color:#37caff;box-shadow:0 0 0 3px #168cff25}
+#barajlar .baraj-summary{display:grid;grid-template-columns:auto 1fr;align-items:center;gap:20px;padding:18px;border:1px solid #39baff33;border-radius:19px;background:linear-gradient(120deg,#0b3970aa,#09264b99)}
+#barajlar .baraj-big{font-size:clamp(38px,6vw,58px);font-weight:900;letter-spacing:-2px;line-height:1.1}
+#barajlar .baraj-track{height:12px;border-radius:30px;background:#ffffff1c;overflow:hidden;margin:12px 0 8px}
+#barajlar .baraj-fill{height:100%;width:0;background:linear-gradient(90deg,#168cff,#38d7ff);border-radius:30px;transition:width .35s}
+#barajlar .baraj-list{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px;margin-top:14px}
+#barajlar .baraj-item{padding:14px;border:1px solid var(--line);border-radius:15px;background:#0a2b50a8;min-width:0}
+#barajlar .baraj-item-top{display:flex;justify-content:space-between;gap:10px;align-items:center}
+#barajlar .baraj-item strong{overflow-wrap:anywhere}
+#barajlar .baraj-item .baraj-track{height:7px;margin:10px 0 0}
+#barajlar .baraj-status{padding:8px 11px;border-radius:12px;background:#ffffff0b;color:var(--muted);font-size:12px}
+#barajlar .baraj-meta{display:flex;flex-wrap:wrap;gap:8px 16px;margin-top:12px}
+#barajlar .baraj-source{font-size:11px;color:var(--muted);margin-top:14px}
+@media(max-width:600px){#barajlar .baraj-search{flex-direction:column}#barajlar .baraj-summary{grid-template-columns:1fr;gap:10px}#barajlar .baraj-list{grid-template-columns:1fr}}
+
 </style>
 </head>
 <body>
@@ -197,6 +217,7 @@ footer{text-align:center;color:var(--muted);padding:25px 10px;font-size:12px}
       <a href="#tahmin"><span class="nav-icon">◷</span>Tahmin</a>
       <a href="#radar"><span class="nav-icon">▧</span>Haritalar</a>
       <a href="#trafik"><span class="nav-icon">⌁</span>Trafik</a>
+      <a href="#barajlar"><span class="nav-icon">▤</span>Baraj Doluluk</a>
       <a href="#rekorlar"><span class="nav-icon">♨</span>Türkiye Rekorları</a>
       <a href="#ayaz"><span class="nav-icon">✧</span>Ayaz AI</a>
       <a href="#topluluk"><span class="nav-icon">⚙</span>Topluluk</a>
@@ -224,6 +245,61 @@ footer{text-align:center;color:var(--muted);padding:25px 10px;font-size:12px}
       <button class="chip" data-city="Antalya">Antalya</button>
       <button class="chip" data-city="Yalova">Yalova</button>
     </div>
+
+
+    <section class="card" id="barajlar">
+      <div class="section-kicker">ŞEHİR ŞEHİR SU DURUMU</div>
+      <h2 style="margin-top:8px">Baraj Doluluk Oranları</h2>
+      <p class="muted">Bir il seç, o ildeki barajların güncel doluluk oranlarını görüntüle.</p>
+      <form class="baraj-search" id="damSearchForm">
+        <input id="damCityInput" list="damCityOptions" placeholder="Şehir ara... (ör. İstanbul, Yalova)" aria-label="Baraj verisi için şehir ara" value="İstanbul" autocomplete="off">
+        <datalist id="damCityOptions">
+          <option value="Adana"><option value="Adıyaman"><option value="Afyonkarahisar"><option value="Ağrı">
+          <option value="Amasya"><option value="Ankara"><option value="Antalya"><option value="Artvin">
+          <option value="Aydın"><option value="Balıkesir"><option value="Bilecik"><option value="Bingöl">
+          <option value="Bitlis"><option value="Bolu"><option value="Burdur"><option value="Bursa">
+          <option value="Çanakkale"><option value="Çankırı"><option value="Çorum"><option value="Denizli">
+          <option value="Diyarbakır"><option value="Edirne"><option value="Elazığ"><option value="Erzincan">
+          <option value="Erzurum"><option value="Eskişehir"><option value="Gaziantep"><option value="Giresun">
+          <option value="Gümüşhane"><option value="Hakkari"><option value="Hatay"><option value="Isparta">
+          <option value="Mersin"><option value="İstanbul"><option value="İzmir"><option value="Kars">
+          <option value="Kastamonu"><option value="Kayseri"><option value="Kırklareli"><option value="Kırşehir">
+          <option value="Kocaeli"><option value="Konya"><option value="Kütahya"><option value="Malatya">
+          <option value="Manisa"><option value="Kahramanmaraş"><option value="Mardin"><option value="Muğla">
+          <option value="Muş"><option value="Nevşehir"><option value="Niğde"><option value="Ordu">
+          <option value="Rize"><option value="Sakarya"><option value="Samsun"><option value="Siirt">
+          <option value="Sinop"><option value="Sivas"><option value="Tekirdağ"><option value="Tokat">
+          <option value="Trabzon"><option value="Tunceli"><option value="Şanlıurfa"><option value="Uşak">
+          <option value="Van"><option value="Yozgat"><option value="Zonguldak"><option value="Aksaray">
+          <option value="Bayburt"><option value="Karaman"><option value="Kırıkkale"><option value="Batman">
+          <option value="Şırnak"><option value="Bartın"><option value="Ardahan"><option value="Iğdır">
+          <option value="Yalova"><option value="Karabük"><option value="Kilis"><option value="Osmaniye"><option value="Düzce">
+        </datalist>
+        <button class="btn" type="submit" id="damSearchButton">Barajları Ara</button>
+      </form>
+      <div id="damStatus" class="baraj-status" role="status" aria-live="polite">İstanbul verileri yükleniyor...</div>
+      <div id="damResults" hidden>
+        <div class="baraj-summary">
+          <div>
+            <div class="muted" id="damProvinceName">İl geneli</div>
+            <div class="baraj-big" id="damOverallRate">--%</div>
+          </div>
+          <div>
+            <strong>İl genelindeki doluluk</strong>
+            <div class="baraj-track"><div class="baraj-fill" id="damOverallFill"></div></div>
+            <div class="muted" id="damOverallNote">Resmî kaynaklardan derlenen son ölçüm</div>
+            <div class="baraj-meta">
+              <span class="muted" id="damMeasuredAt">Ölçüm tarihi: --</span>
+              <span class="muted" id="damAuthority">Kaynak: --</span>
+            </div>
+          </div>
+        </div>
+        <h2 style="margin-top:20px">Barajlar</h2>
+        <div class="baraj-list" id="damList"></div>
+      </div>
+      <p class="baraj-source">Veri kaynağı: <a href="https://www.dolulukorani.com/veri" target="_blank" rel="noopener noreferrer" style="color:#72dfff;text-decoration:underline">dolulukorani.com açık veri API'si</a> · Veriler resmî kurum yayınlarından derlenir. Otomatik yenileme: 30 dakikada bir.</p>
+      <p id="damError" role="alert"></p>
+    </section>
 
     <div class="dashboard" id="anasayfa">
       <div class="main-column">
@@ -341,7 +417,7 @@ document.addEventListener("DOMContentLoaded",()=>{
 "use strict";
 
 // API anahtarlarını buraya gir.
-const OWM_API_KEY = "528336ccec76b916918cca15ab14ed3a";
+const OWM_API_KEY = "OPENWEATHERMAP_API_KEY_BURAYA_GIR";
 const $ = id => document.getElementById(id);
 const state = {
   city: "İstanbul",
@@ -925,7 +1001,7 @@ document.getElementById("stopSpeakBtn").addEventListener("click", function () {
   mapElement.dataset.initialized = "true";
 
   // Kendi TomTom API anahtarını buraya gir.
-  const TOMTOM_API_KEY = "hwO8lLQSzwFEgnTlM8DztSGXXDPj3UnJ";
+  const TOMTOM_API_KEY = "TOMTOM_API_KEY_BURAYA_EKLE";
 
   if (typeof L === "undefined") {
     mapElement.textContent = "Harita kütüphanesi yüklenemedi.";
@@ -1085,6 +1161,137 @@ document.getElementById("stopSpeakBtn").addEventListener("click", function () {
 })();
 </script>
 
+
+
+<script>
+/* Baraj dolulukları: il bazında canlı veri */
+(function(){
+  const API_BASE = "https://www.dolulukorani.com/api/v1";
+  const input = document.getElementById("damCityInput");
+  const form = document.getElementById("damSearchForm");
+  const button = document.getElementById("damSearchButton");
+  const status = document.getElementById("damStatus");
+  const results = document.getElementById("damResults");
+  const errorBox = document.getElementById("damError");
+  let activeCity = "İstanbul";
+
+  function slugify(value){
+    return value.trim().toLocaleLowerCase("tr-TR")
+      .replace(/ı/g,"i").normalize("NFD").replace(/[\u0300-\u036f]/g,"")
+      .replace(/ç/g,"c").replace(/ğ/g,"g").replace(/ö/g,"o")
+      .replace(/ş/g,"s").replace(/ü/g,"u").replace(/\s+/g,"-");
+  }
+  function pick(obj, keys){
+    if(!obj || typeof obj !== "object") return undefined;
+    for(const key of keys) if(obj[key] !== undefined && obj[key] !== null) return obj[key];
+    return undefined;
+  }
+  function fmtRate(value){
+    const n = Number(value);
+    return Number.isFinite(n) ? n.toLocaleString("tr-TR",{minimumFractionDigits:1,maximumFractionDigits:2})+"%" : "Veri yok";
+  }
+  function fmtDate(value){
+    if(!value) return "Ölçüm tarihi: belirtilmemiş";
+    const d = new Date(value);
+    return Number.isNaN(d.getTime()) ? "Ölçüm tarihi: "+String(value) :
+      "Ölçüm tarihi: "+d.toLocaleString("tr-TR",{dateStyle:"medium",timeStyle:"short"});
+  }
+  function safeText(value, fallback="Belirtilmemiş"){
+    return value === undefined || value === null || value === "" ? fallback : String(value);
+  }
+  function makeBar(rate){
+    const bar = document.createElement("div");
+    bar.className = "baraj-track";
+    const fill = document.createElement("div");
+    fill.className = "baraj-fill";
+    const n = Number(rate);
+    fill.style.width = Number.isFinite(n) ? Math.max(0,Math.min(100,n))+"%" : "0%";
+    bar.appendChild(fill);
+    return bar;
+  }
+  function renderDamData(payload, city){
+    const root = payload?.data ?? payload;
+    const province = root?.province ?? root?.il ?? root;
+    const dams = pick(root,["dams","barajlar"]) ??
+      pick(province,["dams","barajlar"]) ??
+      pick(payload,["dams","barajlar"]) ?? [];
+    const rate = pick(province,["fill_rate","fillRate","doluluk_orani","average_fill_rate","overall_fill_rate"]);
+    const provinceName = pick(province,["name","province","province_name","il"]) || city;
+    const measured = pick(province,["measured_at","measuredAt","updated_at","last_updated"]);
+    const authority = pick(province,["authority","source","kaynak"]);
+    document.getElementById("damProvinceName").textContent = provinceName+" · İl geneli";
+    document.getElementById("damOverallRate").textContent = rate === undefined ? "Veri yok" : fmtRate(rate);
+    document.getElementById("damOverallFill").style.width = Number.isFinite(Number(rate)) ? Math.max(0,Math.min(100,Number(rate)))+"%" : "0%";
+    document.getElementById("damOverallNote").textContent =
+      rate === undefined ? "Bu il için yayımlanmış genel oran bulunamadı." : "İçme suyu barajlarının kapasite ağırlıklı il oranı";
+    document.getElementById("damMeasuredAt").textContent = fmtDate(measured);
+    document.getElementById("damAuthority").textContent = "Kaynak: "+safeText(authority,"ilgili su idaresi");
+    const list = document.getElementById("damList");
+    list.replaceChildren();
+    if(Array.isArray(dams) && dams.length){
+      dams.forEach(dam=>{
+        const card = document.createElement("article");
+        card.className = "baraj-item";
+        const top = document.createElement("div");
+        top.className = "baraj-item-top";
+        const name = document.createElement("strong");
+        name.textContent = safeText(pick(dam,["name","dam_name","baraj_adi","title"]),"İsimsiz baraj");
+        const val = document.createElement("span");
+        val.textContent = fmtRate(pick(dam,["fill_rate","fillRate","doluluk_orani","active_fill_rate"]));
+        top.append(name,val);
+        card.append(top,makeBar(pick(dam,["fill_rate","fillRate","doluluk_orani","active_fill_rate"])));
+        const detail = document.createElement("div");
+        detail.className = "muted";
+        detail.style.marginTop = "8px";
+        const damDate = pick(dam,["measured_at","measuredAt","updated_at"]);
+        detail.textContent = damDate ? fmtDate(damDate) : "";
+        card.appendChild(detail);
+        list.appendChild(card);
+      });
+    } else {
+      const empty = document.createElement("div");
+      empty.className = "baraj-status";
+      empty.textContent = "Bu il için tek tek baraj verisi yayımlanmamış veya şu anda mevcut değil.";
+      list.appendChild(empty);
+    }
+    results.hidden = false;
+    status.textContent = city+" için veri alındı.";
+    errorBox.textContent = "";
+  }
+  async function loadDamData(city){
+    if(!city.trim()) return;
+    activeCity = city.trim();
+    button.disabled = true;
+    button.textContent = "Yükleniyor...";
+    status.textContent = activeCity+" baraj verileri alınıyor...";
+    errorBox.textContent = "";
+    try{
+      const response = await fetch(API_BASE+"/provinces/"+encodeURIComponent(slugify(activeCity)),{
+        method:"GET",headers:{Accept:"application/json"},cache:"no-store"
+      });
+      if(!response.ok) throw new Error(response.status===404 ? "Bu il için veri kaydı bulunamadı." : "Veri servisi yanıt vermedi ("+response.status+").");
+      const payload = await response.json();
+      renderDamData(payload,activeCity);
+      input.value = activeCity;
+    }catch(error){
+      results.hidden = true;
+      status.textContent = "Baraj verisi şu anda gösterilemiyor.";
+      errorBox.textContent = error.message+" Bir süre sonra tekrar deneyebilirsin.";
+      console.error("Baraj verisi hatası:",error);
+    }finally{
+      button.disabled = false;
+      button.textContent = "Barajları Ara";
+    }
+  }
+  form.addEventListener("submit",event=>{
+    event.preventDefault();
+    loadDamData(input.value);
+  });
+  loadDamData("İstanbul");
+  // Veri sağlayıcısı yaklaşık 30 dakikada bir güncellendiğinden daha sık sorgulanmaz.
+  window.setInterval(()=>loadDamData(activeCity),30*60*1000);
+})();
+</script>
 
 </body>
 </html>
